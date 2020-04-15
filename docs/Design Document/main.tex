@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+
+\begin{titlepage}
+    \title{FilterStudio Design Document}    
+    \author{Paweł Chłąd \\ Bartłomiej Meller \\ Daniel Jambor }
+\end{titlepage}
+
+
+\begin{document}
+
+\maketitle
+\pagebreak
+
+
+\section{Overview}
+
+The following document covers overall design and features of FilterStudio application.
+
+FilterStudio is a tool that allows users to design and test image filters. Users can 
+design individual filters and also combine different filters together. 
+
+
+\subsection{Features}
+
+
+\begin{itemize}
+\item \textbf{Filter Design} - Capability to construct basic matrix filters, user can specify
+how big filter is and what values are used in it.
+
+\item \textbf{Filter Project View} - Capability to join diffrent filters together, and manage
+multiple filters as a one project.
+
+\item \textbf{Filter and Filter Project Saving} - Capability to save filter and filter groups to file (prefably JSON)
+\item \textbf{Live Image View} - Capability to load any image to the application that will allow users to see
+how filter or filter group work on certain image. Any change to filter or filter group will refresh Live Image View to show
+reflected changes.
+\item \textbf{Image Saving} - Capability to save changed images 
+\end{itemize}
+
+
+\end{document}
