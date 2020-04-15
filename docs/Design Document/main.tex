@@ -41,4 +41,25 @@ reflected changes.
 \end{itemize}
 
 
+\section{Detailed feature overview}
+This section contains detailed feature descriptions
+
+\subsection{Filter Design}
+This feature allows users for designing basic matrix filters. Users can choose size of matrix in two dimensions, the view will resize accordingly to the size of a filter. Matrix View will consist of "tiles" in which you can write some integer value. After adjusting any value or size of the filter, Live Image View should update accordingly
+
+\subsection{Filter Project View}
+This feature allows users for desiging groups of filters. The order in which individual filters / operations are shown in this view reflects the order of execution of filters. The whole thing can be shown as a tree of filters or as a list (in simpler scenarion). On the top of the tree there is an special default input node, which simply just passes any input to the tree below.
+
+
+\subsection{Filter and Filter Project Saving} 
+This feature allows users for saving individual filters as well as whole filter project. Needed for users so that they can continue working after closing and opening the application.
+
+\subsection{Live Image View}
+This feature allows users for viewing last input and output of individual filter or filter group. This feature can be turned off to decrease amount of work that is done by processor. If Live View is turned on any change in group or in any individual filter in that group will trigger Live View update and the appropiate image will be shown.
+
+\subsection{Image Saving}
+This feature allows users to save individual images from filters or filter groups.
+
+
+
 \end{document}
