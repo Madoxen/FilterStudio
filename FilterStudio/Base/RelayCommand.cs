@@ -2,7 +2,7 @@
 using System.Windows.Input;
 
 
-namespace ChickenManager
+namespace FilterStudio
 {
     /// <summary>
     /// Specifies Command that will simply call given "execute" method and can check whenever it can be executed

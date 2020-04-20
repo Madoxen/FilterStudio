@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace ChickenManager
+namespace FilterStudio
 {
     public abstract class BaseVM : INotifyPropertyChanged
     {
@@ -28,7 +28,7 @@ namespace ChickenManager
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (PropertyChanged != null) { PropertyChanged(this, e); }
+            PropertyChanged?.Invoke(this, e);
         }
     }
 }
