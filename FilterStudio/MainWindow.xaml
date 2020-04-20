@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilterStudio"
         xmlns:vm="clr-namespace:FilterStudio.VM"
+        xmlns:view="clr-namespace:FilterStudio.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
@@ -21,20 +22,65 @@
 
 
         <Grid.RowDefinitions>
+            <!--Row 0 is reserved for upper menu bar-->
             <RowDefinition Height="25" MaxHeight="25"/>
+            <!--Row 1 is for content-->
             <RowDefinition/>
         </Grid.RowDefinitions>
-
+        
+        
+        <!--Upper menu bar-->
         <Menu Grid.Row="0" Grid.ColumnSpan="999">
             <MenuItem Header="File">
-                <MenuItem Header="Create new Project..."></MenuItem>
-                <MenuItem Header="Open Project..."></MenuItem>
-                <MenuItem Header="Save Project"></MenuItem>
+                <MenuItem Header="Create new Project..." Command="{Binding CreateNewProjectCommand}"></MenuItem>
+                <MenuItem Header="Open Project..." Command="{Binding LoadProjectCommand}"></MenuItem>
+                <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Project">
-                <MenuItem Header="Add new filter"></MenuItem>
+                <MenuItem Header="Add new filter" Command="{Binding AddFilterCommand}"></MenuItem>
+                <MenuItem Header="Remove selected filter" Command="{Binding RemoveFilterCommand}"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Image">
+                <MenuItem Header="Load..."></MenuItem>
+                <MenuItem Header="Save..."></MenuItem>
             </MenuItem>
         </Menu>
+
+
+
+        <!--Project view-->
+        <ListView ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter}" Grid.Row="1" Grid.Column="0">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <view:FilterListElement DataContext="{Binding}"></view:FilterListElement>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+            
+            
+        </ListView>
+
+
+        <!--Content control for Filter Designer view note: we could change it with custom user control if you want-->
+        <ContentControl Grid.Row="1" Grid.Column="1"/>
+
+
+        <!--Image view-->
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+           <!--Input image-->
+            <Image Source="{Binding SelectedFilter.LastInput}" ></Image>
+            
+            <!--Output image-->
+            <Image Source="{Binding SelectedFilter.LastOutput}" Grid.Row="1"></Image>
+            
+        </Grid>
+
+
 
 
 

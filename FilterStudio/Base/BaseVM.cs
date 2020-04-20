@@ -28,7 +28,7 @@ namespace FilterStudio
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (PropertyChanged != null) { PropertyChanged(this, e); }
+            PropertyChanged?.Invoke(this, e);
         }
     }
 }
