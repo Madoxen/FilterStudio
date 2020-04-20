@@ -38,6 +38,7 @@ namespace FilterStudio.Core
 
         /// <summary>
         /// Executes filters from top to bottom
+        /// Note: This is a long running task, wrap in in Task T to avoid thread lock
         /// </summary>
         public void Execute()
         {

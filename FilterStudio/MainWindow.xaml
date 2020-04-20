@@ -4,10 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilterStudio"
+        xmlns:vm="clr-namespace:FilterStudio.VM"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
+    <Window.DataContext>
+        <vm:MainVM/>
+    </Window.DataContext>
+    
     <Grid>
-        <Menu>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" MaxHeight="25"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="999">
             <MenuItem Header="File">
                 <MenuItem Header="Create new Project..."></MenuItem>
                 <MenuItem Header="Open Project..."></MenuItem>
@@ -17,5 +35,10 @@
                 <MenuItem Header="Add new filter"></MenuItem>
             </MenuItem>
         </Menu>
+
+
+
+
     </Grid>
+    
 </Window>

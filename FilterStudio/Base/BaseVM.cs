@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace ChickenManager
+namespace FilterStudio
 {
     public abstract class BaseVM : INotifyPropertyChanged
     {
