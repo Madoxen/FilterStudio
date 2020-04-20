@@ -9,13 +9,14 @@ using System.Linq;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using FilterStudio.Concrete;
+using FilterStudio.Core;
 
 namespace FilterStudio.VM
 {
     public class MainVM : BaseVM
     {
 
-
+        #region Properties
         private ObservableCollection<FilterVM> filters = new ObservableCollection<FilterVM>();
         /// <summary>
         /// List of filters that makeup whole project
@@ -35,25 +36,41 @@ namespace FilterStudio.VM
             get { return selectedFilter; }
             set { SetProperty(ref selectedFilter, value); }
         }
+        #endregion
 
 
+        #region Commands
         public RelayCommand SaveProjectCommand { get; set; }
         public RelayCommand LoadProjectCommand { get; set; }
         public RelayCommand CreateNewProjectCommand { get; set; }
 
         public RelayCommand AddFilterCommand { get; set; }
         public RelayCommand RemoveFilterCommand { get; set; }
+        #endregion
+
+        #region Private Members
+        private readonly ExecutionEngineVM executionEngineVM;
+        public ExecutionEngineVM ExecutionEngineVM
+        {
+            get
+            {
+                return executionEngineVM;
+            }
+        }
+        #endregion
+
 
         public MainVM()
         {
+            executionEngineVM = new ExecutionEngineVM(Filters);
+
+
             SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
             LoadProjectCommand = new RelayCommand(LoadProject);
             CreateNewProjectCommand = new RelayCommand(CreateNewProject);
             AddFilterCommand = new RelayCommand(AddFilter, CanAddFilter);
             RemoveFilterCommand = new RelayCommand(RemoveFilter, CanRemoveFilter);
         }
-
-
 
 
         #region Project Related Methods
@@ -110,8 +127,6 @@ namespace FilterStudio.VM
 
         #region Filter Related Methods
 
-
-
         /// <summary>
         /// Creates new filter VM with given filter
         /// </summary>
@@ -144,11 +159,10 @@ namespace FilterStudio.VM
 
         public bool CanRemoveFilter(object _)
         {
-            return SelectedFilter != null ? true : false;
+            return (SelectedFilter != null && SelectedFilter.CanDelete) ? true : false;
         }
 
         #endregion
-
 
 
 

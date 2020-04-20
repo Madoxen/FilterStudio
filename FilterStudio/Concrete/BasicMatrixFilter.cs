@@ -60,9 +60,9 @@ namespace FilterStudio.Concrete
                     if (maskSum == 0)
                         maskSum = 1;
 
-                    R = R / maskSum;
-                    B = B / maskSum;
-                    G = G / maskSum;
+                    R /= maskSum;
+                    B /= maskSum;
+                    G /= maskSum;
 
 
 

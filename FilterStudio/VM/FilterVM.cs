@@ -25,9 +25,30 @@ namespace FilterStudio.VM
         public Bitmap LastOutput
         {
             get { return lastOutput; }
-            private set { SetProperty(ref lastInput, value); }
+            private set { SetProperty(ref lastOutput, value); }
         }
 
+
+        private bool canReorder;
+        /// <summary>
+        /// Indicates if given node can change order in project tree
+        /// </summary>
+        public bool CanReorder
+        {
+            get { return canReorder; }
+            set { SetProperty(ref canReorder, value); }
+        }
+
+
+        private bool canDelete;
+        /// <summary>
+        /// Indicates if given node can be deleted
+        /// </summary>
+        public bool CanDelete
+        {
+            get { return canDelete; }
+            set { SetProperty(ref canDelete, value); }
+        }
 
         private string name;
         /// <summary>
@@ -55,7 +76,7 @@ namespace FilterStudio.VM
         /// <summary>
         /// Operates underlaying filter, and sets properties of this filter after the operation
         /// </summary>
-        void Operate()
+        public void Operate()
         {
             underlayingFilter.Input = LastInput;
             underlayingFilter.Operate();
