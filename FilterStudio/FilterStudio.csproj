@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FilterLib\FilterLib.csproj" />
+    <Folder Include="Concrete\" />
+    <Folder Include="VM\" />
   </ItemGroup>
 
 </Project>
