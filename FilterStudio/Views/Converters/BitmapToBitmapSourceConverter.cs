@@ -16,7 +16,6 @@ namespace FilterStudio.Views.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-
             if (!(value is Bitmap b))
             {
                 Debug.WriteLine("value parameter is of type " + value?.GetType().ToString() + " not of expected Bitmap type");

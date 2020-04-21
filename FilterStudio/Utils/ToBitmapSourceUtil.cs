@@ -40,8 +40,7 @@ namespace FilterStudio.Utils
         public static BitmapSource ToBitmapSource(this System.Drawing.Bitmap source)
         {
             BitmapSource bitSrc = null;
-
-            var hBitmap = source.GetHbitmap();
+            IntPtr hBitmap = source.GetHbitmap();
 
             try
             {
