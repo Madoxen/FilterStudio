@@ -2,11 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace FilterStudio.Concrete
 {
+
+    /// <summary>
+    /// This filter assumes that we are using square arrays
+    /// </summary>
     public class BasicMatrixFilter : IFilter
     {
 
@@ -18,8 +25,8 @@ namespace FilterStudio.Concrete
 
 
         public BasicMatrixFilter()
-        { 
-        
+        {
+
         }
 
         public BasicMatrixFilter(double[][] FilterData)
@@ -27,35 +34,63 @@ namespace FilterStudio.Concrete
             FilterData.CopyTo(this.FilterData, 0);
         }
 
-        public void Operate()
-        { 
-            Bitmap map = new Bitmap(Input.Width, Input.Height);
-            int Length = FilterData.Length / 2;
 
-            for (int i = 0; i < Input.Width; i++)
+        public void Operate()
+        {
+            int filterWidth = FilterData.Length;
+            int filterHeight = FilterData[0].Length;
+            Bitmap map = new Bitmap(Input);
+
+            Rectangle rect = new Rectangle(0, 0, map.Width, map.Height);
+            BitmapData data = map.LockBits(rect, ImageLockMode.ReadWrite, map.PixelFormat);
+            int depth = Bitmap.GetPixelFormatSize(data.PixelFormat) / 8; //bytes per pixel
+            byte[] buffer = new byte[data.Width * data.Height * depth];
+
+            //copy pixels to buffer
+            Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
+
+            Process(buffer, 0, 0, data.Width, data.Height, filterWidth, filterHeight, data.Width, depth);
+
+            //Copy the buffer back to image
+            Marshal.Copy(buffer, 0, data.Scan0, buffer.Length);
+            map.UnlockBits(data);
+            Output = map;
+        }
+
+
+        private void Process(byte[] data, int x, int y, int endx, int endy, int filterWidth, int filterHeight, int stride, int depth)
+        {
+
+            filterWidth /= 2;
+            filterHeight /= 2;
+
+            for (int i = x; i < endx; i++)
             {
-                for (int j = 0; j < Input.Height; j++)
+                for (int j = y; j < endy; j++)
                 {
                     double maskSum = 0;
+                    int offset = ((j * stride) + i) * depth;
                     double R = 0;
-                    double B = 0;
                     double G = 0;
+                    double B = 0;
 
 
-                    for (int k = -Length; k < Length + 1; k++)
+                    for (int k = -filterWidth; k < filterWidth + 1; k++)
                     {
-                        for (int g = -Length; g < Length + 1; g++)
+                        for (int g = -filterHeight; g < filterHeight + 1; g++)
                         {
-                            if (k + i < 0 || k + i >= Input.Width || g + j < 0 || g + j >= Input.Height)
+                            //Check for overflow
+                            if (k + i < 0 || k + i >= endx || g + j < 0 || g + j >= endy)
                                 continue;
 
-                            Color filterPixel = Input.GetPixel(k + i, g + j);
-                            maskSum += FilterData[k + Length][g + (Length)];
-                            R += filterPixel.R * FilterData[k + (Length)][g + (Length)];
-                            B += filterPixel.B * FilterData[k + (Length)][g + (Length)];
-                            G += filterPixel.G * FilterData[k + (Length)][g + (Length)];
+                            int filterPixelIndex = (((j + g) * stride) + k+i)*depth;
+                            maskSum += FilterData[k + filterWidth][g + filterHeight];
+                            R += data[filterPixelIndex] * FilterData[k + filterWidth][g + filterHeight];
+                            G += data[filterPixelIndex + 1] * FilterData[k + filterWidth][g + filterHeight];
+                            B += data[filterPixelIndex + 2] * FilterData[k + filterWidth][g + filterHeight];
                         }
                     }
+
 
                     if (maskSum == 0)
                         maskSum = 1;
@@ -86,11 +121,11 @@ namespace FilterStudio.Concrete
 
 
 
-                    Color newColor = Color.FromArgb(Convert.ToInt32(R), Convert.ToInt32(G), Convert.ToInt32(B));
-                    map.SetPixel(i, j, newColor);
+                    data[offset] = Convert.ToByte(R);
+                    data[offset + 1] = Convert.ToByte(G);
+                    data[offset + 2] = Convert.ToByte(B);
                 }
             }
-            Output = map;
         }
     }
 }

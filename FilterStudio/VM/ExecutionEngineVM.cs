@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Windows.Threading;
 
 namespace FilterStudio.VM
 {
@@ -37,42 +38,55 @@ namespace FilterStudio.VM
         }
 
 
-
-
         public RelayCommand ExecuteTreeCommand { get; set; }
         public RelayCommand LoadImageCommand { get; set; }
         public RelayCommand SaveImageCommand { get; set; }
 
 
         private readonly ObservableCollection<FilterVM> currentTree;
-        
- 
+
+        private Task executeTreeTask;
+        private CancellationToken executeTreeCancellationToken;
 
         public ExecutionEngineVM(ObservableCollection<FilterVM> currentTree)
         {
             this.currentTree = currentTree;
 
 
-            ExecuteTreeCommand = new RelayCommand(ExecuteTree, CanExecuteTree);
+            ExecuteTreeCommand = new RelayCommand(StartExecuteTree, CanExecuteTree);
             LoadImageCommand = new RelayCommand(LoadImage);
             SaveImageCommand = new RelayCommand(SaveImage, CanSaveImage);
         }
 
 
 
-        public void ExecuteTree()
+        public void StartExecuteTree()
+        {
+            executeTreeCancellationToken = new CancellationToken();
+            executeTreeTask = new Task(ExecuteTree,executeTreeCancellationToken);
+            executeTreeTask.Start();
+        }
+
+        private void AfterExecuteTree()
+        { 
+            foreach(FilterVM v in currentTree)
+            {
+                v.NotifyUI();
+            }
+        }
+
+
+        private void ExecuteTree()
         {
             Bitmap currentOutput = currentlyLoadedBitmap;
             foreach (FilterVM filter in currentTree)
             {
-                filter.LastInput = currentOutput;
-                filter.Operate();
+                filter.Operate(currentOutput);
                 currentOutput = filter.LastOutput;
             }
             LastOutputBitmap = currentTree.Last().LastOutput;
+            Dispatcher.CurrentDispatcher.Invoke(AfterExecuteTree);
         }
-
-    
 
         public bool CanExecuteTree(object _)
         {

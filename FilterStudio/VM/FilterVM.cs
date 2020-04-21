@@ -76,11 +76,25 @@ namespace FilterStudio.VM
         /// <summary>
         /// Operates underlaying filter, and sets properties of this filter after the operation
         /// </summary>
-        public void Operate()
+        public Bitmap Operate(in Bitmap input)
         {
-            underlayingFilter.Input = LastInput;
+            underlayingFilter.Input = input;
             underlayingFilter.Operate();
-            LastOutput = underlayingFilter.Output;
+
+            //Note that we do not update Properties, to avoid INCP update
+            lastInput = underlayingFilter.Input;
+            lastOutput = underlayingFilter.Output;
+
+            return underlayingFilter.Output;
+        }
+
+
+        //Notifies UI about bitmap changes
+        public void NotifyUI()
+        {
+            //Trigger INCP
+            RaisePropertyChanged(nameof(LastInput));
+            RaisePropertyChanged(nameof(LastOutput));
         }
 
     }
