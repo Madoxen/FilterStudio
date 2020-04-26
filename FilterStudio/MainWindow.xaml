@@ -53,7 +53,6 @@
         </Menu>
 
 
-
         <!--Project view-->
         <ListView ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter}" Grid.Row="1" Grid.Column="0">
             <ListView.ItemTemplate>

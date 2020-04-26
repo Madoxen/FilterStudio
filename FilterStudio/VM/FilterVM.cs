@@ -65,6 +65,10 @@ namespace FilterStudio.VM
         /// Can be only set by using constructor
         /// </summary>
         private readonly IFilter underlayingFilter;
+        public IFilter UnderlayingFilter
+        {
+            get { return underlayingFilter; }
+        }
 
         public FilterVM(IFilter UnderlayingFilter)
         {

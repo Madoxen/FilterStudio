@@ -7,7 +7,7 @@ using System.Windows.Controls;
 namespace FilterStudio.Interfaces
 {
     /// <summary>
-    /// Represents an operation unit (strategy patteern)
+    /// Represents an operation unit (strategy pattern)
     /// </summary>
     public interface IFilter
     { 
