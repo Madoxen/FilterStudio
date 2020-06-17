@@ -15,7 +15,6 @@ namespace FilterStudio.VM
     public class ExecutionEngineVM : BaseVM
     {
 
-
         private Bitmap currentlyLoadedBitmap;
         /// <summary>
         /// Originally loaded bitmap

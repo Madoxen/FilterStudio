@@ -23,7 +23,7 @@ namespace FilterStudio.Concrete
         public Bitmap Input { get; set; }
 
 
-        public double[][] FilterData { get; set; }
+        public double[,] FilterData { get; set; }
 
 
 
@@ -34,11 +34,11 @@ namespace FilterStudio.Concrete
         private void OnFilterDataChanged()
         {
             maskSum = 0;
-            for (int g = 0; g < FilterData.Length; g++)
+            for (int g = 0; g < FilterData.GetLength(0); g++)
             {
-                for (int k = 0; k < FilterData[0].Length; k++)
+                for (int k = 0; k < FilterData.GetLength(1); k++)
                 {
-                    maskSum += FilterData[k][g];
+                    maskSum += FilterData[k, g];
                 }
             }
 
@@ -49,10 +49,10 @@ namespace FilterStudio.Concrete
 
         public BasicMatrixFilter()
         {
-            
+
         }
 
-        public BasicMatrixFilter(double[][] FilterData)
+        public BasicMatrixFilter(double[,] FilterData)
         {
             FilterData.CopyTo(this.FilterData, 0);
             OnFilterDataChanged();
@@ -61,8 +61,8 @@ namespace FilterStudio.Concrete
 
         public void Operate()
         {
-            int filterWidth = FilterData.Length / 2;
-            int filterHeight = FilterData[0].Length / 2;
+            int filterWidth = FilterData.GetLength(0) / 2;
+            int filterHeight = FilterData.GetLength(1) / 2;
             Bitmap map = new Bitmap(Input);
 
             Rectangle rect = new Rectangle(0, 0, map.Width, map.Height);
@@ -97,9 +97,9 @@ namespace FilterStudio.Concrete
                                 continue;
 
                             int filterPixelIndex = centralPixel + (g * Stride) + (k * 3);
-                            R += buffer[filterPixelIndex] * FilterData[k + filterWidth][g + filterHeight];
-                            G += buffer[filterPixelIndex + 1] * FilterData[k + filterWidth][g + filterHeight];
-                            B += buffer[filterPixelIndex + 2] * FilterData[k + filterWidth][g + filterHeight];
+                            R += buffer[filterPixelIndex] * FilterData[k + filterWidth, g + filterHeight];
+                            G += buffer[filterPixelIndex + 1] * FilterData[k + filterWidth, g + filterHeight];
+                            B += buffer[filterPixelIndex + 2] * FilterData[k + filterWidth, g + filterHeight];
                         }
                     }
 

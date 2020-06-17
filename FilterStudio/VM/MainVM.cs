@@ -131,11 +131,13 @@ namespace FilterStudio.VM
         //TODO: Add presets 
         private void AddFilter()
         {
-            BasicMatrixFilter concreteFilter = new BasicMatrixFilter();
-            concreteFilter.FilterData = new double[3][];
-            concreteFilter.FilterData[0] = new double[] { -1.0, -1.0, -1.0 };
-            concreteFilter.FilterData[1] = new double[] { -1.0, 8.0, -1.0 };
-            concreteFilter.FilterData[2] = new double[] { -1.0, -1.0, -1.0 };
+            BasicMatrixFilter concreteFilter = new BasicMatrixFilter
+            {
+                FilterData = new double[3, 3] {
+                { -1.0, -1.0, -1.0 },
+                { -1.0, 8.0, -1.0 },
+                { -1.0, -1.0, -1.0 }}
+            };
 
             FilterVM vm = new FilterVM(concreteFilter)
             {
