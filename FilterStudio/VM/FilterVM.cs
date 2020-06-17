@@ -82,14 +82,14 @@ namespace FilterStudio.VM
         /// </summary>
         public Bitmap Operate(in Bitmap input)
         {
-            underlayingFilter.Input = input;
-            underlayingFilter.Operate();
+                underlayingFilter.Input = input;
+                underlayingFilter.Operate();
 
-            //Note that we do not update Properties, to avoid INCP update
-            lastInput = underlayingFilter.Input;
-            lastOutput = underlayingFilter.Output;
+                //Note that we do not update Properties, to avoid INCP update
+                lastInput = underlayingFilter.Input;
+                lastOutput = underlayingFilter.Output;
 
-            return underlayingFilter.Output;
+                return underlayingFilter.Output;
         }
 
 

@@ -51,51 +51,61 @@ namespace FilterStudio.VM
         public ExecutionEngineVM(ObservableCollection<FilterVM> currentTree)
         {
             this.currentTree = currentTree;
-
-
             ExecuteTreeCommand = new RelayCommand(StartExecuteTree, CanExecuteTree);
             LoadImageCommand = new RelayCommand(LoadImage);
             SaveImageCommand = new RelayCommand(SaveImage, CanSaveImage);
         }
 
 
-
-        public void StartExecuteTree()
+        /// <summary>
+        /// Starts execution task on another non-UI thread
+        /// </summary>
+        private void StartExecuteTree()
         {
             executeTreeCancellationToken = new CancellationToken();
             executeTreeTask = new Task(ExecuteTree,executeTreeCancellationToken);
             executeTreeTask.Start();
         }
 
+        /// <summary>
+        /// Action that is called after tree execution
+        /// This runs on UI thread
+        /// </summary>
         private void AfterExecuteTree()
-        { 
-            foreach(FilterVM v in currentTree)
-            {
-                v.NotifyUI();
-            }
+        {
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+                {
+                foreach (FilterVM v in currentTree)
+                {
+                    v.NotifyUI();
+                }
+            });
         }
-
 
         private void ExecuteTree()
         {
-            Bitmap currentOutput = currentlyLoadedBitmap;
-            foreach (FilterVM filter in currentTree)
+            object lObject = new object();
+            lock(lObject) //lock 
             {
-                filter.Operate(currentOutput);
-                currentOutput = filter.LastOutput;
+                Bitmap currentOutput = currentlyLoadedBitmap;
+                foreach (FilterVM filter in currentTree)
+                {
+                    filter.Operate(currentOutput);
+                    currentOutput = filter.LastOutput;
+                }
+                LastOutputBitmap = currentTree.Last().LastOutput;
             }
-            LastOutputBitmap = currentTree.Last().LastOutput;
-            Dispatcher.CurrentDispatcher.Invoke(AfterExecuteTree);
+            AfterExecuteTree();
         }
 
-        public bool CanExecuteTree(object _)
+        private bool CanExecuteTree(object _)
         {
             if (currentTree?.Count > 0 && CurrentlyLoadedBitmap != null)
                 return true;
             return false;
         }
 
-        public void LoadImage()
+        private void LoadImage()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.ShowDialog();
@@ -109,7 +119,7 @@ namespace FilterStudio.VM
             CurrentlyLoadedBitmap = new Bitmap(fileName);
         }
 
-        public void SaveImage()
+        private void SaveImage()
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.ShowDialog();
@@ -118,7 +128,7 @@ namespace FilterStudio.VM
         }
 
 
-        public bool CanSaveImage(object _)
+        private bool CanSaveImage(object _)
         {
             return LastOutputBitmap != null ? true : false;
         }
