@@ -25,7 +25,7 @@
                 <ListBox ItemsSource="{Binding Path=., Mode=TwoWay}">
                     <ListBox.ItemTemplate>
                         <DataTemplate >
-                            <TextBox Text="{Binding Path=., Mode=TwoWay}"></TextBox>
+                            <TextBox Text="{Binding Path=Value, Mode=TwoWay}"></TextBox>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

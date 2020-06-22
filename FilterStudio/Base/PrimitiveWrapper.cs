@@ -29,7 +29,7 @@ namespace FilterStudio.Base
     /// ProTip: WPF is fucked
     /// </example>
     /// <typeparam name="T"></typeparam>
-    public class PrimitiveWrapper<T> : BaseVM
+    public class PrimitiveWrapper<T> : BaseVM where T : struct
     {
         private T val;
         public T Value
@@ -39,8 +39,14 @@ namespace FilterStudio.Base
         }
 
 
+        public PrimitiveWrapper(T value)
+        {
+            Value = value;
+        }
+
         public PrimitiveWrapper()
         {
+            Value = default(T);
         }
     }
 }

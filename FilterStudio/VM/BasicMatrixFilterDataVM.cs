@@ -1,4 +1,5 @@
-﻿using FilterStudio.Concrete;
+﻿using FilterStudio.Base;
+using FilterStudio.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,8 +9,8 @@ namespace FilterStudio.VM
 {
     public class BasicMatrixFilterDataVM : FilterDataVM
     {
-        private ObservableCollection<ObservableCollection<double>> matrix;
-        public ObservableCollection<ObservableCollection<double>> Matrix
+        private ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>> matrix;
+        public ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>> Matrix
         {
             get { return matrix; }
             set { SetProperty(ref matrix, value); }
@@ -39,7 +40,7 @@ namespace FilterStudio.VM
 
             concreteFilter = (BasicMatrixFilter)filter.UnderlayingFilter;
 
-            Matrix = new ObservableCollection<ObservableCollection<double>>();
+            Matrix = new ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>>();
 
             this.PropertyChanged += OnDimensionsChanged;
         }
@@ -49,10 +50,10 @@ namespace FilterStudio.VM
         {
             for (int i = 0; i < data.GetLength(0); i++)
             {
-                Matrix.Add(new ObservableCollection<double>());
+                Matrix.Add(new ObservableCollection<PrimitiveWrapper<double>>());
                 for (int j = 0; j < data.GetLength(1); j++)
                 {
-                    Matrix[i].Add(data[i, j]);
+                    Matrix[i].Add(new PrimitiveWrapper<double>(data[i, j]));
                 }
             }
             Width = Matrix.Count;
@@ -69,7 +70,7 @@ namespace FilterStudio.VM
             {
                 for (int j = 0; j < matrix[0].Count; j++)
                 {
-                    concreteFilter.FilterData[i, j] = Matrix[i][j];
+                    concreteFilter.FilterData[i, j] = Matrix[i][j].Value;
                 }
             }
             concreteFilter.OnFilterDataChanged();
@@ -84,7 +85,7 @@ namespace FilterStudio.VM
                 {
                     for (int i = Matrix.Count; i < Height; i++)
                     {
-                        Matrix.Add(new ObservableCollection<double>());
+                        Matrix.Add(new ObservableCollection<PrimitiveWrapper<double>>());
                     }
                 }
                 else if (Height < Matrix.Count)
@@ -97,13 +98,13 @@ namespace FilterStudio.VM
             }
             else if (e.PropertyName == "Width")
             {
-                foreach (ObservableCollection<double> oc in Matrix)
+                foreach (ObservableCollection<PrimitiveWrapper<double>> oc in Matrix)
                 {
                     if (Width > oc.Count)
                     {
                         for (int i = oc.Count; i < Width; i++)
                         {
-                            oc.Add(0.0);
+                            oc.Add(new PrimitiveWrapper<double>(0.0));
                         }
                     }
                     else if (Width < oc.Count)
