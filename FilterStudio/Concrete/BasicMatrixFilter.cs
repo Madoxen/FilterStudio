@@ -23,22 +23,20 @@ namespace FilterStudio.Concrete
         public Bitmap Input { get; set; }
 
 
-        public double[][] FilterData { get; set; }
-
-
+        public double[,] FilterData { get; set; }
 
         private double maskSum = 1;
 
 
 
-        private void OnFilterDataChanged()
+        public void OnFilterDataChanged()
         {
             maskSum = 0;
-            for (int g = 0; g < FilterData.Length; g++)
+            for (int g = 0; g < FilterData.GetLength(0); g++)
             {
-                for (int k = 0; k < FilterData[0].Length; k++)
+                for (int k = 0; k < FilterData.GetLength(1); k++)
                 {
-                    maskSum += FilterData[k][g];
+                    maskSum += FilterData[g,k];
                 }
             }
 
@@ -49,20 +47,33 @@ namespace FilterStudio.Concrete
 
         public BasicMatrixFilter()
         {
-            
+
         }
 
-        public BasicMatrixFilter(double[][] FilterData)
+        public BasicMatrixFilter(double[,] FilterData)
         {
-            FilterData.CopyTo(this.FilterData, 0);
+            this.FilterData = new double[FilterData.GetLength(0), FilterData.GetLength(1)];
+            for (int i = 0; i < FilterData.GetLength(0); i++) //Copy array by values
+            {
+                for (int j = 0; j < FilterData.GetLength(1); j++)
+                {
+                    this.FilterData[i, j] = FilterData[i, j];
+                }
+            }
             OnFilterDataChanged();
         }
 
 
+
         public void Operate()
         {
-            int filterWidth = FilterData.Length / 2;
-            int filterHeight = FilterData[0].Length / 2;
+            int halfFilterWidth = FilterData.GetLength(0) / 2;
+            int halfFilterHeight = FilterData.GetLength(1) / 2;
+
+            int filterWidth = FilterData.GetLength(0);
+            int filterHeight = FilterData.GetLength(1);
+
+
             Bitmap map = new Bitmap(Input);
 
             Rectangle rect = new Rectangle(0, 0, map.Width, map.Height);
@@ -87,9 +98,9 @@ namespace FilterStudio.Concrete
                     double G = 0;
                     double B = 0;
 
-                    for (int g = -filterHeight; g < filterHeight + 1; g++)
+                    for (int g = -halfFilterHeight; g < halfFilterHeight + (filterHeight % 2); g++)
                     {
-                        for (int k = -filterWidth; k < filterWidth + 1; k++)
+                        for (int k = -halfFilterWidth; k < halfFilterWidth + (filterWidth % 2); k++)
                         {
 
                             //Check for overflow
@@ -97,9 +108,9 @@ namespace FilterStudio.Concrete
                                 continue;
 
                             int filterPixelIndex = centralPixel + (g * Stride) + (k * 3);
-                            R += buffer[filterPixelIndex] * FilterData[k + filterWidth][g + filterHeight];
-                            G += buffer[filterPixelIndex + 1] * FilterData[k + filterWidth][g + filterHeight];
-                            B += buffer[filterPixelIndex + 2] * FilterData[k + filterWidth][g + filterHeight];
+                            R += buffer[filterPixelIndex] * FilterData[k + halfFilterWidth, g + halfFilterHeight];
+                            G += buffer[filterPixelIndex + 1] * FilterData[k + halfFilterWidth, g + halfFilterHeight];
+                            B += buffer[filterPixelIndex + 2] * FilterData[k + halfFilterWidth, g + halfFilterHeight];
                         }
                     }
 
