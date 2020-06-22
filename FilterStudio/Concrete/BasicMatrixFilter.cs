@@ -25,13 +25,11 @@ namespace FilterStudio.Concrete
 
         public double[,] FilterData { get; set; }
 
-
-
         private double maskSum = 1;
 
 
 
-        private void OnFilterDataChanged()
+        public void OnFilterDataChanged()
         {
             maskSum = 0;
             for (int g = 0; g < FilterData.GetLength(0); g++)
@@ -54,9 +52,17 @@ namespace FilterStudio.Concrete
 
         public BasicMatrixFilter(double[,] FilterData)
         {
-            FilterData.CopyTo(this.FilterData, 0);
+            this.FilterData = new double[FilterData.GetLength(0), FilterData.GetLength(1)];
+            for (int i = 0; i < FilterData.GetLength(0); i++) //Copy array by values
+            {
+                for (int j = 0; j < FilterData.GetLength(1); j++)
+                {
+                    this.FilterData[i, j] = FilterData[i, j];
+                }
+            }
             OnFilterDataChanged();
         }
+
 
 
         public void Operate()

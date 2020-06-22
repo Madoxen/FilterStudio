@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:FilterStudio"
         xmlns:vm="clr-namespace:FilterStudio.VM"
         xmlns:view="clr-namespace:FilterStudio.Views"
-        xmlns:converter="clr-namespace:FilterStudio.Views.Converters"
+        xmlns:selectors="clr-namespace:FilterStudio.Views.Selectors"
+        xmlns:converters="clr-namespace:FilterStudio.Views.Converters"
+        xmlns:concrete="clr-namespace:FilterStudio.Concrete"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
@@ -16,7 +18,14 @@
 
 
     <Window.Resources>
-        <converter:BitmapToBitmapSourceConverter x:Key="ToBitmapSourceConverter"></converter:BitmapToBitmapSourceConverter>
+        <converters:BitmapToBitmapSourceConverter x:Key="ToBitmapSourceConverter"></converters:BitmapToBitmapSourceConverter>
+
+        <DataTemplate x:Key="BasicMatrixFilterTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
+            <view:MatrixEditorControl></view:MatrixEditorControl>
+        </DataTemplate>
+
+
+        <selectors:FilterDesignerTemplateSelector x:Key="DesignerTemplateSelector"></selectors:FilterDesignerTemplateSelector>
     </Window.Resources>
     
     <Grid>
@@ -64,9 +73,9 @@
 
 
         <!--Content control for Filter Designer view note: we could change it with custom user control if you want-->
-        <ContentControl Grid.Row="1" Grid.Column="1"/>
-
-
+        <ContentControl Grid.Column="1" Grid.Row="1" Content="{Binding SelectedFilter.DataVM}" ContentTemplateSelector="{StaticResource DesignerTemplateSelector}"/> 
+        
+        
         <!--Image view-->
         <Grid Grid.Row="1" Grid.Column="2">
             <Grid.RowDefinitions>
@@ -75,9 +84,9 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-           <!--Input image-->
+            <!--Input image-->
             <Image Source="{Binding SelectedFilter.LastInput, Converter={StaticResource ToBitmapSourceConverter}}" ></Image>
-            
+
             <!--Output image-->
             <Image Source="{Binding SelectedFilter.LastOutput, Converter={StaticResource ToBitmapSourceConverter}}" Grid.Row="1"></Image>
 
@@ -90,14 +99,7 @@
                 <CheckBox Content="Live Update" Grid.Column="0"></CheckBox>
                 <Button Command="{Binding ExecutionEngineVM.ExecuteTreeCommand}" Content="Execute" Grid.Column="1"/>
             </Grid>
-            
         </Grid>
-
-
-
-
-
-
     </Grid>
     
 </Window>

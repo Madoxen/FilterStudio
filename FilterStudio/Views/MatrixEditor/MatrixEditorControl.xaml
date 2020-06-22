@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="FilterStudio.Views.MatrixEditorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:FilterStudio.Views.Converters"
+             xmlns:local="clr-namespace:FilterStudio.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+
+    <UserControl.Resources>
+        <converters:Array2DToList2DConverter x:Key="ToList2DConverter"></converters:Array2DToList2DConverter>
+    </UserControl.Resources>
+
+
+
+
+    <!--This control allows for binding into the 2D arrays-->
+    <ListBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Matrix, Converter={StaticResource ToList2DConverter}, Mode=TwoWay}">
+        <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+                <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=MatrixWidth}" Rows="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=MatrixHeight}"/>
+            </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <ListBox ItemsSource="{Binding Path=., Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Path=., Mode=TwoWay}"></TextBox>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+
+    </ListBox>
+
+</UserControl>

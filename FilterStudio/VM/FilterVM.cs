@@ -70,11 +70,20 @@ namespace FilterStudio.VM
             get { return underlayingFilter; }
         }
 
+        private FilterDataVM dataVM;
+        public FilterDataVM DataVM
+        {
+            get { return dataVM; }
+            set { SetProperty(ref dataVM, value); }
+        }
+
+
         public FilterVM(IFilter UnderlayingFilter)
         {
             underlayingFilter = UnderlayingFilter;
             LastInput = UnderlayingFilter.Input;
             LastOutput = UnderlayingFilter.Output;
+            DataVM = new BasicMatrixFilterDataVM(this); //for now just use concrete 
         }
 
         /// <summary>

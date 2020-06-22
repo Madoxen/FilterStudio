@@ -11,7 +11,6 @@ namespace FilterStudio.Interfaces
     /// </summary>
     public interface IFilter
     { 
-
         /// <summary>
         /// An Operation Method that will execute code in concrete implementation
         /// using Inputs provided values and after execution, will push necessary values to outputs

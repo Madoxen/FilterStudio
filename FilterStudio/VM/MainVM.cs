@@ -132,12 +132,11 @@ namespace FilterStudio.VM
         private void AddFilter()
         {
             BasicMatrixFilter concreteFilter = new BasicMatrixFilter
-            {
-                FilterData = new double[3, 3] {
+            (new double[3, 3] {
                 { -1.0, -1.0, -1.0 },
                 { -1.0, 8.0, -1.0 },
-                { -1.0, -1.0, -1.0 }}
-            };
+                { -1.0, -1.0, -1.0 }});
+
 
             FilterVM vm = new FilterVM(concreteFilter)
             {
