@@ -65,12 +65,28 @@ namespace FilterStudio.VM
         /// Can be only set by using constructor
         /// </summary>
         private readonly IFilter underlayingFilter;
+        public IFilter UnderlayingFilter
+        {
+            get { return underlayingFilter; }
+        }
+
+        private FilterDataVM dataVM;
+        public FilterDataVM DataVM
+        {
+            get { return dataVM; }
+            set { SetProperty(ref dataVM, value); }
+        }
+
 
         public FilterVM(IFilter UnderlayingFilter)
         {
             underlayingFilter = UnderlayingFilter;
             LastInput = UnderlayingFilter.Input;
             LastOutput = UnderlayingFilter.Output;
+            DataVM = new BasicMatrixFilterDataVM(this, new double[3, 3] {
+                { -1.0, -1.0, -1.0 },
+                { -1.0, 8.0, -1.0 },
+                { -1.0, -1.0, -1.0 }}); //for now just use concrete 
         }
 
         /// <summary>

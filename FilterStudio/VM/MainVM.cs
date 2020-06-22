@@ -63,8 +63,6 @@ namespace FilterStudio.VM
         public MainVM()
         {
             executionEngineVM = new ExecutionEngineVM(Filters);
-
-
             SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
             LoadProjectCommand = new RelayCommand(LoadProject);
             CreateNewProjectCommand = new RelayCommand(CreateNewProject);
@@ -74,7 +72,7 @@ namespace FilterStudio.VM
 
 
         #region Project Related Methods
-        public void CreateNewProject()
+        private void CreateNewProject()
         {
             Filters = new ObservableCollection<FilterVM>();
         }
@@ -82,7 +80,7 @@ namespace FilterStudio.VM
         /// <summary>
         /// Opens file dialog and if everything's fine, saves project to a JSON file
         /// </summary>
-        public void SaveProject()
+        private void SaveProject()
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.ShowDialog();
@@ -98,7 +96,7 @@ namespace FilterStudio.VM
         }
 
 
-        public bool CanSaveProject(object _)
+        private bool CanSaveProject(object _)
         {
             if (filters != null)
                 return true;
@@ -109,7 +107,7 @@ namespace FilterStudio.VM
         /// <summary>
         /// Opens file dialog and if everything's fine, loads project from JSON file
         /// </summary>
-        public void LoadProject()
+        private void LoadProject()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.ShowDialog();
@@ -131,33 +129,37 @@ namespace FilterStudio.VM
         /// Creates new filter VM with given filter
         /// </summary>
         //TODO: Add presets 
-        public void AddFilter()
+        private void AddFilter()
         {
-            BasicMatrixFilter concreteFilter = new BasicMatrixFilter();
-            concreteFilter.FilterData = new double[3][];
-            concreteFilter.FilterData[0] = new double[] { 1.0, 1.0, 1.0 };
-            concreteFilter.FilterData[1] = new double[] { 1.0, 1.0, 1.0 };
-            concreteFilter.FilterData[2] = new double[] { 1.0, 1.0, 1.0 };
+            BasicMatrixFilter concreteFilter = new BasicMatrixFilter
+            (new double[3, 3] {
+                { -1.0, -1.0, -1.0 },
+                { -1.0, 8.0, -1.0 },
+                { -1.0, -1.0, -1.0 }});
 
-            FilterVM vm = new FilterVM(concreteFilter);
+
+            FilterVM vm = new FilterVM(concreteFilter)
+            {
+                Name = "Filter #" + Filters.Count
+            };
             Filters.Add(vm);
             SelectedFilter = vm;
         }
 
-        public bool CanAddFilter(object _)
+        private bool CanAddFilter(object _)
         {
             return Filters != null ? true : false;
         }
 
 
-        public void RemoveFilter()
+        private void RemoveFilter()
         {
             Filters.Remove(SelectedFilter);
             //Set selection to null to avoid little memory leak
             SelectedFilter = null;
         }
 
-        public bool CanRemoveFilter(object _)
+        private bool CanRemoveFilter(object _)
         {
             return (SelectedFilter != null && SelectedFilter.CanDelete) ? true : false;
         }

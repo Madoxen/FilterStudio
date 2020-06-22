@@ -7,11 +7,10 @@ using System.Windows.Controls;
 namespace FilterStudio.Interfaces
 {
     /// <summary>
-    /// Represents an operation unit (strategy patteern)
+    /// Represents an operation unit (strategy pattern)
     /// </summary>
     public interface IFilter
     { 
-
         /// <summary>
         /// An Operation Method that will execute code in concrete implementation
         /// using Inputs provided values and after execution, will push necessary values to outputs

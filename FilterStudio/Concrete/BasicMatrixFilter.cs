@@ -1,6 +1,7 @@
 ﻿using FilterStudio.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -21,7 +22,27 @@ namespace FilterStudio.Concrete
 
         public Bitmap Input { get; set; }
 
-        public double[][] FilterData { get; set; }
+
+        public double[,] FilterData { get; set; }
+
+        private double maskSum = 1;
+
+
+
+        public void OnFilterDataChanged()
+        {
+            maskSum = 0;
+            for (int g = 0; g < FilterData.GetLength(0); g++)
+            {
+                for (int k = 0; k < FilterData.GetLength(1); k++)
+                {
+                    maskSum += FilterData[g,k];
+                }
+            }
+
+            if (maskSum == 0)
+                maskSum = 1;
+        }
 
 
         public BasicMatrixFilter()
@@ -29,75 +50,74 @@ namespace FilterStudio.Concrete
 
         }
 
-        public BasicMatrixFilter(double[][] FilterData)
+        public BasicMatrixFilter(double[,] FilterData)
         {
-            FilterData.CopyTo(this.FilterData, 0);
+            this.FilterData = new double[FilterData.GetLength(0), FilterData.GetLength(1)];
+            for (int i = 0; i < FilterData.GetLength(0); i++) //Copy array by values
+            {
+                for (int j = 0; j < FilterData.GetLength(1); j++)
+                {
+                    this.FilterData[i, j] = FilterData[i, j];
+                }
+            }
+            OnFilterDataChanged();
         }
+
 
 
         public void Operate()
         {
-            int filterWidth = FilterData.Length;
-            int filterHeight = FilterData[0].Length;
+            int halfFilterWidth = FilterData.GetLength(0) / 2;
+            int halfFilterHeight = FilterData.GetLength(1) / 2;
+
+            int filterWidth = FilterData.GetLength(0);
+            int filterHeight = FilterData.GetLength(1);
+
+
             Bitmap map = new Bitmap(Input);
 
             Rectangle rect = new Rectangle(0, 0, map.Width, map.Height);
-            BitmapData data = map.LockBits(rect, ImageLockMode.ReadWrite, map.PixelFormat);
-            int depth = Bitmap.GetPixelFormatSize(data.PixelFormat) / 8; //bytes per pixel
-            byte[] buffer = new byte[data.Width * data.Height * depth];
+            BitmapData data = map.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            byte[] buffer = new byte[Math.Abs(data.Stride) * data.Height];
+            byte[] image = new byte[Math.Abs(data.Stride) * data.Height];
 
             //copy pixels to buffer
             Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
 
-            Process(buffer, 0, 0, data.Width, data.Height, filterWidth, filterHeight, data.Width, depth);
 
-            //Copy the buffer back to image
-            Marshal.Copy(buffer, 0, data.Scan0, buffer.Length);
-            map.UnlockBits(data);
-            Output = map;
-        }
+            int Height = data.Height;
+            int Width = data.Width;
+            int Stride = Math.Abs(data.Stride);
 
-
-        private void Process(byte[] data, int x, int y, int endx, int endy, int filterWidth, int filterHeight, int stride, int depth)
-        {
-
-            filterWidth /= 2;
-            filterHeight /= 2;
-
-            for (int i = x; i < endx; i++)
+            for (int y = 0; y < Height; y++) //operate on RGB bitmap values
             {
-                for (int j = y; j < endy; j++)
+                for (int x = 0; x < Width; x++) //in-stride position
                 {
-                    double maskSum = 0;
-                    int offset = ((j * stride) + i) * depth;
+                    int centralPixel = (Stride * y) + (x * 3);
                     double R = 0;
                     double G = 0;
                     double B = 0;
 
-
-                    for (int k = -filterWidth; k < filterWidth + 1; k++)
+                    for (int g = -halfFilterHeight; g < halfFilterHeight + (filterHeight % 2); g++)
                     {
-                        for (int g = -filterHeight; g < filterHeight + 1; g++)
+                        for (int k = -halfFilterWidth; k < halfFilterWidth + (filterWidth % 2); k++)
                         {
+
                             //Check for overflow
-                            if (k + i < 0 || k + i >= endx || g + j < 0 || g + j >= endy)
+                            if (k + x < 0 || k + x >= Width || g + y < 0 || g + y >= Height)
                                 continue;
 
-                            int filterPixelIndex = (((j + g) * stride) + k+i)*depth;
-                            maskSum += FilterData[k + filterWidth][g + filterHeight];
-                            R += data[filterPixelIndex] * FilterData[k + filterWidth][g + filterHeight];
-                            G += data[filterPixelIndex + 1] * FilterData[k + filterWidth][g + filterHeight];
-                            B += data[filterPixelIndex + 2] * FilterData[k + filterWidth][g + filterHeight];
+                            int filterPixelIndex = centralPixel + (g * Stride) + (k * 3);
+                            R += buffer[filterPixelIndex] * FilterData[k + halfFilterWidth, g + halfFilterHeight];
+                            G += buffer[filterPixelIndex + 1] * FilterData[k + halfFilterWidth, g + halfFilterHeight];
+                            B += buffer[filterPixelIndex + 2] * FilterData[k + halfFilterWidth, g + halfFilterHeight];
                         }
                     }
 
 
-                    if (maskSum == 0)
-                        maskSum = 1;
-
                     R /= maskSum;
-                    B /= maskSum;
                     G /= maskSum;
+                    B /= maskSum;
 
 
 
@@ -121,11 +141,17 @@ namespace FilterStudio.Concrete
 
 
 
-                    data[offset] = Convert.ToByte(R);
-                    data[offset + 1] = Convert.ToByte(G);
-                    data[offset + 2] = Convert.ToByte(B);
+                    image[centralPixel] = Convert.ToByte(R);
+                    image[centralPixel + 1] = Convert.ToByte(G);
+                    image[centralPixel + 2] = Convert.ToByte(B);
                 }
             }
+
+
+            //Copy the buffer back to image
+            Marshal.Copy(image, 0, data.Scan0, image.Length);
+            map.UnlockBits(data);
+            Output = map;
         }
     }
 }
