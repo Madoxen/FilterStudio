@@ -9,18 +9,14 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
 
-    <UserControl.Resources>
-        <converters:Array2DToList2DConverter x:Key="ToList2DConverter"></converters:Array2DToList2DConverter>
-    </UserControl.Resources>
-
 
 
 
     <!--This control allows for binding into the 2D arrays-->
-    <ListBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Matrix, Converter={StaticResource ToList2DConverter}, Mode=TwoWay}">
+    <ListBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Matrix, Mode=TwoWay}">
         <ListBox.ItemsPanel>
             <ItemsPanelTemplate>
-                <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=MatrixWidth}" Rows="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=MatrixHeight}"/>
+                <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Width}" Rows="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Height}"/>
             </ItemsPanelTemplate>
         </ListBox.ItemsPanel>
 
@@ -28,7 +24,7 @@
             <DataTemplate>
                 <ListBox ItemsSource="{Binding Path=., Mode=TwoWay}">
                     <ListBox.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate >
                             <TextBox Text="{Binding Path=., Mode=TwoWay}"></TextBox>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

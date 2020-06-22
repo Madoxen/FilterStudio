@@ -32,15 +32,10 @@ namespace FilterStudio.VM
 
 
         private BasicMatrixFilter concreteFilter;
-
-        /// <summary>
-        /// Creates 3x3 matrix data vm
-        /// </summary>
-        /// <param name="filter"></param>
         public BasicMatrixFilterDataVM(FilterVM filter) : base(filter)
         {
             if (!(filter.UnderlayingFilter is BasicMatrixFilter))
-                throw new ArgumentException("BasicMatrixFilterDataVM can only handle BasicMatrixFilter type of underlaying filter (is: " + filter.UnderlayingFilter.GetType() + " | must be: BasicMatrixFilter");
+                throw new ArgumentException("BasicMatrixFilterDataVM can only handle BasicMatrixFilter type of underlaying filter (is: " + filter.UnderlayingFilter.GetType() + " | must be: BasicMatrixFilter)");
 
             concreteFilter = (BasicMatrixFilter)filter.UnderlayingFilter;
 
@@ -50,17 +45,20 @@ namespace FilterStudio.VM
         }
 
 
-
         public BasicMatrixFilterDataVM(FilterVM filter, double[,] data) : this(filter)
         {
             for (int i = 0; i < data.GetLength(0); i++)
             {
+                Matrix.Add(new ObservableCollection<double>());
                 for (int j = 0; j < data.GetLength(1); j++)
-                { 
-                
+                {
+                    Matrix[i].Add(data[i, j]);
                 }
             }
-            
+            Width = Matrix.Count;
+            Height = Matrix[0].Count;
+
+            SetData();
         }
 
 

@@ -83,7 +83,10 @@ namespace FilterStudio.VM
             underlayingFilter = UnderlayingFilter;
             LastInput = UnderlayingFilter.Input;
             LastOutput = UnderlayingFilter.Output;
-            DataVM = new BasicMatrixFilterDataVM(this); //for now just use concrete 
+            DataVM = new BasicMatrixFilterDataVM(this, new double[3, 3] {
+                { -1.0, -1.0, -1.0 },
+                { -1.0, 8.0, -1.0 },
+                { -1.0, -1.0, -1.0 }}); //for now just use concrete 
         }
 
         /// <summary>
@@ -91,14 +94,14 @@ namespace FilterStudio.VM
         /// </summary>
         public Bitmap Operate(in Bitmap input)
         {
-                underlayingFilter.Input = input;
-                underlayingFilter.Operate();
+            underlayingFilter.Input = input;
+            underlayingFilter.Operate();
 
-                //Note that we do not update Properties, to avoid INCP update
-                lastInput = underlayingFilter.Input;
-                lastOutput = underlayingFilter.Output;
+            //Note that we do not update Properties, to avoid INCP update
+            lastInput = underlayingFilter.Input;
+            lastOutput = underlayingFilter.Output;
 
-                return underlayingFilter.Output;
+            return underlayingFilter.Output;
         }
 
 
