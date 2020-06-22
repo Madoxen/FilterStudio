@@ -10,28 +10,59 @@
 
 
 
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition MaxHeight="50"/>
+        </Grid.RowDefinitions>
+
+        <!--This control allows for binding into the 2D arrays-->
+        <ListBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Matrix, Mode=TwoWay}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Width}" Rows="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Height}"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <ListBox ItemsSource="{Binding Path=., Mode=TwoWay}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate >
+                                <TextBox Text="{Binding Path=Value, Mode=TwoWay}"></TextBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
 
 
-    <!--This control allows for binding into the 2D arrays-->
-    <ListBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Matrix, Mode=TwoWay}">
-        <ListBox.ItemsPanel>
-            <ItemsPanelTemplate>
-                <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Width}" Rows="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Height}"/>
-            </ItemsPanelTemplate>
-        </ListBox.ItemsPanel>
+        <Grid Grid.Row="1">
 
-        <ListBox.ItemTemplate>
-            <DataTemplate>
-                <ListBox ItemsSource="{Binding Path=., Mode=TwoWay}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate >
-                            <TextBox Text="{Binding Path=Value, Mode=TwoWay}"></TextBox>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-    </ListBox>
+
+            <Button Command="{Binding IncrementWidth}" Grid.Column="0">X++</Button>
+            <Button Command="{Binding DecrementWidth}" Grid.Column="1">X--</Button>
+
+            <Button Command="{Binding IncrementHeight}" Grid.Column="2">Y++</Button>
+            <Button Command="{Binding DecrementHeight}" Grid.Column="3">Y--</Button>
+        </Grid>
+
+
+
+    </Grid>
+
+
+
+
 
 </UserControl>

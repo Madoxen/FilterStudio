@@ -3,7 +3,10 @@ using FilterStudio.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Text;
+using System.Linq;
+using System.ComponentModel;
 
 namespace FilterStudio.VM
 {
@@ -13,8 +16,18 @@ namespace FilterStudio.VM
         public ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>> Matrix
         {
             get { return matrix; }
-            set { SetProperty(ref matrix, value); }
+            set
+            {
+                if(matrix != null)
+                    matrix.CollectionChanged -= TopChanged;
+
+                SetProperty(ref matrix, value);
+
+                if(matrix != null)
+                    matrix.CollectionChanged += TopChanged;
+            }
         }
+
 
         private int width;
         public int Width
@@ -32,6 +45,12 @@ namespace FilterStudio.VM
         }
 
 
+        public RelayCommand IncrementHeight { get; set; }
+        public RelayCommand DecrementHeight { get; set; }
+        public RelayCommand IncrementWidth { get; set; }
+        public RelayCommand DecrementWidth { get; set; }
+
+
         private BasicMatrixFilter concreteFilter;
         public BasicMatrixFilterDataVM(FilterVM filter) : base(filter)
         {
@@ -41,6 +60,11 @@ namespace FilterStudio.VM
             concreteFilter = (BasicMatrixFilter)filter.UnderlayingFilter;
 
             Matrix = new ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>>();
+
+            IncrementHeight = new RelayCommand(() => { Height++; });
+            DecrementHeight = new RelayCommand(() => { Height--; }, (_) => { return Height > 1; });
+            IncrementWidth = new RelayCommand(() => { Width++; });
+            DecrementWidth = new RelayCommand(() => { Width--; }, (_) => { return Width > 1; });
 
             this.PropertyChanged += OnDimensionsChanged;
         }
@@ -62,6 +86,60 @@ namespace FilterStudio.VM
             SetData();
         }
 
+        //Called when top level matrix changes
+        private void TopChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //If we remove items from this collection, make sure that we unsubscribe from events so that we wont have memory leak
+            if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (ObservableCollection<PrimitiveWrapper<double>> oc in e.OldItems)
+                {
+                    oc.CollectionChanged -= MidChanged;
+                    foreach (PrimitiveWrapper<double> pw in oc)
+                    {
+                        pw.PropertyChanged -= BotChanged;
+                    }
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (ObservableCollection<PrimitiveWrapper<double>> oc in e.NewItems)
+                {
+                    oc.CollectionChanged += MidChanged;
+                }
+            }
+
+        }
+
+        //Called when middle level matrixes change
+        private void MidChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //If we remove items from this collection, make sure that we unsubscribe from events so that we wont have memory leak
+            if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (PrimitiveWrapper<double> pw in e.OldItems)
+                {
+                    pw.PropertyChanged -= BotChanged;
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add) //if we add any items, make sure that we will subscribe to event
+            {
+                foreach (PrimitiveWrapper<double> pw in e.NewItems)
+                {
+                    pw.PropertyChanged += BotChanged;
+                }
+            }
+        }
+
+        private void BotChanged(object sender, PropertyChangedEventArgs e)
+        {
+            SetData();
+        }
+
+
+
+ 
+
 
         public override void SetData()
         {
@@ -76,7 +154,6 @@ namespace FilterStudio.VM
             concreteFilter.OnFilterDataChanged();
         }
 
-
         private void OnDimensionsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Height")
@@ -86,6 +163,10 @@ namespace FilterStudio.VM
                     for (int i = Matrix.Count; i < Height; i++)
                     {
                         Matrix.Add(new ObservableCollection<PrimitiveWrapper<double>>());
+                        for (int j = 0; j < Width; j++)
+                        {
+                            Matrix.Last().Add(new PrimitiveWrapper<double>(0.0));
+                        }
                     }
                 }
                 else if (Height < Matrix.Count)
@@ -116,6 +197,8 @@ namespace FilterStudio.VM
                     }
                 }
             }
+
+            SetData();
         }
 
 
