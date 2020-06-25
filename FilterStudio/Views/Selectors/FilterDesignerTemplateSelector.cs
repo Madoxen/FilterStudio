@@ -25,17 +25,17 @@ namespace FilterStudio.Views.Selectors
             {
                 return null;
             }
-            if (item == null || !(item is FilterDataVM))
+            if (item == null || !(item is FilterDataProviderVM))
             {
                //throw new ApplicationException();
                 return null;
             }
-            if ((item as FilterDataVM) is BasicMatrixFilterDataVM) //So this might seem like it's breaking Liskov, buuut we really cant do it other way, without creating whole plugin system
+            if ((item as FilterDataProviderVM) is BasicMatrixFilterDataProviderVM) //So this might seem like it's breaking Liskov, buuut we really cant do it other way, without creating whole plugin system
                 //which is not the premise of this project (deadlines boiz).
             {
                 return elem.FindResource("BasicMatrixFilterTemplate") as DataTemplate;
             }
-            if ((item as FilterDataVM) is GaussianFilterDataVM) //So this might seem like it's breaking Liskov, buuut we really cant do it other way, without creating whole plugin system
+            if ((item as FilterDataProviderVM) is GaussianFilterDataProviderVM) //So this might seem like it's breaking Liskov, buuut we really cant do it other way, without creating whole plugin system
                                                                    //which is not the premise of this project (deadlines boiz).
             {
                 return elem.FindResource("GaussianMatrixFilterTemplate") as DataTemplate;

@@ -1,4 +1,5 @@
-﻿using FilterStudio.Interfaces;
+﻿using FilterStudio.Core;
+using FilterStudio.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ namespace FilterStudio.VM
     /// </summary>
     public class FilterVM : BaseVM
     {
-
         private Bitmap lastInput;
         public Bitmap LastInput
         {
@@ -21,6 +21,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref lastInput, value); }
         }
 
+    
         private Bitmap lastOutput;
         public Bitmap LastOutput
         {
@@ -70,8 +71,9 @@ namespace FilterStudio.VM
             get { return underlayingFilter; }
         }
 
-        private FilterDataVM dataVM;
-        public FilterDataVM DataVM
+  
+        private FilterDataProviderVM dataVM;
+        public FilterDataProviderVM DataVM
         {
             get { return dataVM; }
             set { SetProperty(ref dataVM, value); }
@@ -80,13 +82,23 @@ namespace FilterStudio.VM
 
         public FilterVM(IFilter UnderlayingFilter)
         {
-            underlayingFilter = UnderlayingFilter;
+            underlayingFilter = UnderlayingFilter; //this will be later chosen by presets
             LastInput = UnderlayingFilter.Input;
             LastOutput = UnderlayingFilter.Output;
-            DataVM = new BasicMatrixFilterDataVM(this, new double[3, 3] {
-                { -1.0, -1.0, -1.0 },
-                { -1.0, 8.0, -1.0 },
-                { -1.0, -1.0, -1.0 }}); //for now just use concrete 
+            DataVM = new BasicMatrixFilterDataProviderVM(this);
+        }
+
+        /// <summary>
+        /// Creates new filter VM using saved data object
+        /// </summary>
+        /// <param name="data"></param>
+        public FilterVM(FilterVMData data)
+        {
+            underlayingFilter = data.UnderlayingFilter;
+            CanReorder = data.CanReorder;
+            CanDelete = data.CanDelete;
+            Name = data.Name;
+            DataVM = (FilterDataProviderVM)Activator.CreateInstance(data.FilterDataProviderType, this); //Create concrete type, but cast it to base type
         }
 
         /// <summary>

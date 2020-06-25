@@ -19,12 +19,10 @@ namespace FilterStudio.Concrete
     {
 
         public Bitmap Output { get; private set; }
-
         public Bitmap Input { get; set; }
 
 
         public double[,] FilterData { get; set; }
-
         private double maskSum = 1;
 
 

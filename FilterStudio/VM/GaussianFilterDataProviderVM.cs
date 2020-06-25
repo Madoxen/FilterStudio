@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FilterStudio.VM
 {
-    public class GaussianFilterDataVM : FilterDataVM
+    public class GaussianFilterDataProviderVM : FilterDataProviderVM
     {
         private double sigma = 1;
         public double Sigma
@@ -33,9 +33,9 @@ namespace FilterStudio.VM
         private BasicMatrixFilter concreteFilter;
 
 
-        public GaussianFilterDataVM(FilterVM filter) : base(filter)
+        public GaussianFilterDataProviderVM(FilterVM filter) : base(filter)
         {
-            if (!(filter.UnderlayingFilter is BasicMatrixFilterDataVM))
+            if (!(filter.UnderlayingFilter is BasicMatrixFilterDataProviderVM))
                 throw new ArgumentException("GaussianFilterDataVM can only handle BasicMatrixFilter type of underlaying filter");
 
 
