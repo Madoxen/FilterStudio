@@ -9,14 +9,14 @@ namespace FilterStudio.VM
     /// <summary>
     /// Exposes Underlaying Filter data in a format friendly for binding
     /// </summary>
-    public class FilterDataVM : BaseVM
+    public class FilterDataProviderVM : BaseVM
     {
         /// <summary>
         /// Underlaying filter reference, used to set data values in concrete filter
         /// </summary>
         protected FilterVM filter;
 
-        public FilterDataVM(FilterVM filter)
+        public FilterDataProviderVM(FilterVM filter)
         {
             this.filter = filter;
         }

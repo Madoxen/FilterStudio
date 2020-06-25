@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using FilterStudio.Concrete;
 using FilterStudio.Core;
+using System.Drawing;
 
 namespace FilterStudio.VM
 {
@@ -57,6 +58,15 @@ namespace FilterStudio.VM
                 return executionEngineVM;
             }
         }
+
+
+
+        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+
         #endregion
 
 
@@ -86,13 +96,18 @@ namespace FilterStudio.VM
             fileDialog.ShowDialog();
             string fileName = fileDialog.FileName;
 
-            //TODO: show error to user?
-            if (!File.Exists(fileName))
-                return;
-
+    
             //TODO: Data save
-
-
+            FilterProject project = new FilterProject();
+         //   project.usedBitmapPath = ExecutionEngineVM.CurrentlyLoadedBitmap.Save("")
+            foreach (FilterVM vm in Filters)
+            {
+                project.filterData.Add(new FilterVMData(vm));
+            }
+            
+            string jsonContents = JsonConvert.SerializeObject(project, jsonSerializerSettings);
+            Debug.WriteLine(jsonContents);
+            File.WriteAllText(fileName, jsonContents);
         }
 
 
@@ -117,7 +132,13 @@ namespace FilterStudio.VM
             if (!File.Exists(fileName))
                 return;
 
-            //TODO: Data load
+            //TODO: Last used bitmap load
+            FilterProject project = JsonConvert.DeserializeObject<FilterProject>(File.ReadAllText(fileName), jsonSerializerSettings);
+            Filters = new ObservableCollection<FilterVM>();
+            foreach (FilterVMData data in project.filterData)
+            {
+                Filters.Add(new FilterVM(data));
+            }
         }
 
 
@@ -146,6 +167,8 @@ namespace FilterStudio.VM
             SelectedFilter = vm;
         }
 
+
+      
         private bool CanAddFilter(object _)
         {
             return Filters != null ? true : false;

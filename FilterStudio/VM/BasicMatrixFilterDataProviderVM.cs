@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace FilterStudio.VM
 {
-    public class BasicMatrixFilterDataVM : FilterDataVM
+    public class BasicMatrixFilterDataProviderVM : FilterDataProviderVM
     {
         private ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>> matrix;
         public ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>> Matrix
@@ -18,12 +18,12 @@ namespace FilterStudio.VM
             get { return matrix; }
             set
             {
-                if(matrix != null)
+                if (matrix != null)
                     matrix.CollectionChanged -= TopChanged;
 
                 SetProperty(ref matrix, value);
 
-                if(matrix != null)
+                if (matrix != null)
                     matrix.CollectionChanged += TopChanged;
             }
         }
@@ -51,8 +51,8 @@ namespace FilterStudio.VM
         public RelayCommand DecrementWidth { get; set; }
 
 
-        private BasicMatrixFilter concreteFilter;
-        public BasicMatrixFilterDataVM(FilterVM filter) : base(filter)
+        private readonly BasicMatrixFilter concreteFilter;
+        public BasicMatrixFilterDataProviderVM(FilterVM filter) : base(filter)
         {
             if (!(filter.UnderlayingFilter is BasicMatrixFilter))
                 throw new ArgumentException("BasicMatrixFilterDataVM can only handle BasicMatrixFilter type of underlaying filter (is: " + filter.UnderlayingFilter.GetType() + " | must be: BasicMatrixFilter)");
@@ -66,11 +66,24 @@ namespace FilterStudio.VM
             IncrementWidth = new RelayCommand(() => { Width++; });
             DecrementWidth = new RelayCommand(() => { Width--; }, (_) => { return Width > 1; });
 
+
+            for (int i = 0; i < concreteFilter.FilterData.GetLength(0); i++)
+            {
+                Matrix.Add(new ObservableCollection<PrimitiveWrapper<double>>());
+                for (int j = 0; j < concreteFilter.FilterData.GetLength(1); j++)
+                {
+                    Matrix[i].Add(new PrimitiveWrapper<double>(concreteFilter.FilterData[i, j]));
+                }
+            }
+            Width = Matrix.Count;
+            Height = Matrix[0].Count;
+
+
             this.PropertyChanged += OnDimensionsChanged;
         }
 
 
-        public BasicMatrixFilterDataVM(FilterVM filter, double[,] data) : this(filter)
+        public BasicMatrixFilterDataProviderVM(FilterVM filter, double[,] data) : this(filter)
         {
             for (int i = 0; i < data.GetLength(0); i++)
             {
@@ -138,7 +151,7 @@ namespace FilterStudio.VM
 
 
 
- 
+
 
 
         public override void SetData()
