@@ -35,7 +35,7 @@ namespace FilterStudio.VM
 
         public GaussianFilterDataProviderVM(FilterVM filter) : base(filter)
         {
-            if (!(filter.UnderlayingFilter is BasicMatrixFilterDataProviderVM))
+            if (!(filter.DataVM is BasicMatrixFilterDataProviderVM))
                 throw new ArgumentException("GaussianFilterDataVM can only handle BasicMatrixFilter type of underlaying filter");
 
 
