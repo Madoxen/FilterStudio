@@ -15,6 +15,7 @@ namespace FilterStudio.Core
         {
             ["BasicFilter"] = new BasicFilterFactory(),
             ["GaussianFilter"] = new GaussianFilterFactory(),
+            ["GrayscaleFilter"] = new GrayscaleFilterFactory(),
         };
     }
 }

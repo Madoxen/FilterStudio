@@ -27,8 +27,7 @@
         <DataTemplate x:Key="GaussianMatrixFilterTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
             <view:GaussianFilterEditor></view:GaussianFilterEditor>
         </DataTemplate>
-        
-
+       
         <!--This template will be used if DataProvider of selected VM is null-->
         <DataTemplate x:Key="NullTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
             <view:NullEditorView></view:NullEditorView>
@@ -65,6 +64,7 @@
                 <MenuItem Header="Add new filter">
                     <MenuItem Header="Basic Matrix Filter" Command="{Binding AddFilterCommand}" CommandParameter="BasicFilter"></MenuItem>
                     <MenuItem Header="Gaussian Filter" Command="{Binding AddFilterCommand}" CommandParameter="GaussianFilter"></MenuItem>
+                    <MenuItem Header="Grayscale Filter" Command="{Binding AddFilterCommand}" CommandParameter="GrayscaleFilter"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Remove selected filter" Command="{Binding RemoveFilterCommand}"></MenuItem>
             </MenuItem>

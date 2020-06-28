@@ -12,7 +12,7 @@ namespace FilterStudio.Concrete.FilterFactories
         {
             GrayscaleFilter concrete = new GrayscaleFilter();
             FilterVM vm = new FilterVM(concrete);
-            
+            vm.Name = "New Grayscale Filter";
             return vm;
         }
     }
