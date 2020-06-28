@@ -85,7 +85,6 @@ namespace FilterStudio.VM
             underlayingFilter = UnderlayingFilter; //this will be later chosen by presets
             LastInput = UnderlayingFilter.Input;
             LastOutput = UnderlayingFilter.Output;
-            DataVM = new BasicMatrixFilterDataProviderVM(this);
         }
 
         /// <summary>

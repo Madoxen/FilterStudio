@@ -40,6 +40,11 @@ namespace FilterStudio.Views.Selectors
             {
                 return elem.FindResource("GaussianMatrixFilterTemplate") as DataTemplate;
             }
+            if (item is null) //So this might seem like it's breaking Liskov, buuut we really cant do it other way, without creating whole plugin system
+                                                                                //which is not the premise of this project (deadlines boiz).
+            {
+                return elem.FindResource("NullTemplate") as DataTemplate;
+            }
             throw new ApplicationException();
         }
 
