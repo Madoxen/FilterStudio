@@ -27,7 +27,7 @@ namespace FilterStudio.Concrete
 
 
 
-        public void OnFilterDataChanged()
+        public void RecalculateMask()
         {
             maskSum = 0;
             for (int g = 0; g < FilterData.GetLength(0); g++)
@@ -58,7 +58,7 @@ namespace FilterStudio.Concrete
                     this.FilterData[i, j] = FilterData[i, j];
                 }
             }
-            OnFilterDataChanged();
+            RecalculateMask();
         }
 
 

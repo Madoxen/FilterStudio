@@ -27,6 +27,7 @@
         <DataTemplate x:Key="GaussianMatrixFilterTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
             <view:GaussianFilterEditor></view:GaussianFilterEditor>
         </DataTemplate>
+        
 
         <!--This template will be used if DataProvider of selected VM is null-->
         <DataTemplate x:Key="NullTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">

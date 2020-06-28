@@ -11,7 +11,7 @@ namespace FilterStudio.VM
         public double Sigma
         {
             get { return sigma; }
-            set { SetProperty(ref sigma, value); }
+            set { SetProperty(ref sigma, value); SetData(); }
         }
 
 
@@ -19,7 +19,7 @@ namespace FilterStudio.VM
         public int Width
         {
             get { return width; }
-            set { SetProperty(ref width, value); }
+            set { SetProperty(ref width, value); SetData(); }
         }
 
 
@@ -27,7 +27,7 @@ namespace FilterStudio.VM
         public int Height
         {
             get { return height; }
-            set { SetProperty(ref height, value); }
+            set { SetProperty(ref height, value); SetData(); }
         }
 
         private BasicMatrixFilter concreteFilter;
@@ -35,16 +35,33 @@ namespace FilterStudio.VM
 
         public GaussianFilterDataProviderVM(FilterVM filter) : base(filter)
         {
-            if (!(filter.DataVM is BasicMatrixFilterDataProviderVM))
+            if (!(filter.UnderlayingFilter is BasicMatrixFilter))
                 throw new ArgumentException("GaussianFilterDataVM can only handle BasicMatrixFilter type of underlaying filter");
 
-
+            width = 3; 
+            height = 3;
             concreteFilter = (BasicMatrixFilter)filter.UnderlayingFilter;
         }
 
         public override void SetData()
         {
-            
+            concreteFilter.FilterData = new double[Width, Height];
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    int relativeX = i - Width / 2;
+                    int relativeY = j - Height / 2;
+
+
+                    concreteFilter.FilterData[i, j] = 1.0 / (2.0 * Math.PI * Sigma * Sigma) * Math.Exp((relativeX * relativeX + relativeY * relativeY) / (2.0 * Sigma * Sigma));
+                }
+          
+            }
+
+            concreteFilter.RecalculateMask();
         }
+
+       
     }
 }

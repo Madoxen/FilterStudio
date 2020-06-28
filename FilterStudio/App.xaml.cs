@@ -36,9 +36,6 @@ namespace FilterStudio
             Debugger.Break();
         }
     }
-
-
-
 }
 
 
