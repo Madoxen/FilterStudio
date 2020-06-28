@@ -27,7 +27,7 @@ namespace FilterStudio.Concrete
 
 
 
-        public void OnFilterDataChanged()
+        public void RecalculateMask()
         {
             maskSum = 0;
             for (int g = 0; g < FilterData.GetLength(0); g++)
@@ -58,7 +58,7 @@ namespace FilterStudio.Concrete
                     this.FilterData[i, j] = FilterData[i, j];
                 }
             }
-            OnFilterDataChanged();
+            RecalculateMask();
         }
 
 
@@ -73,11 +73,10 @@ namespace FilterStudio.Concrete
 
 
             Bitmap map = new Bitmap(Input);
-
             Rectangle rect = new Rectangle(0, 0, map.Width, map.Height);
             BitmapData data = map.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             byte[] buffer = new byte[Math.Abs(data.Stride) * data.Height];
-            byte[] image = new byte[Math.Abs(data.Stride) * data.Height];
+            byte[] image = new byte[Math.Abs(data.Stride) * data.Height]; //Final output array
 
             //copy pixels to buffer
             Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);

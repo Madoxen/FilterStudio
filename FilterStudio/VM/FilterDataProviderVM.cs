@@ -8,6 +8,7 @@ namespace FilterStudio.VM
 
     /// <summary>
     /// Exposes Underlaying Filter data in a format friendly for binding
+    /// Base class for all data providers
     /// </summary>
     public class FilterDataProviderVM : BaseVM
     {

@@ -164,7 +164,7 @@ namespace FilterStudio.VM
                     concreteFilter.FilterData[i, j] = Matrix[i][j].Value;
                 }
             }
-            concreteFilter.OnFilterDataChanged();
+            concreteFilter.RecalculateMask();
         }
 
         private void OnDimensionsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

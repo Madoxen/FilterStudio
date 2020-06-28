@@ -45,7 +45,7 @@ namespace FilterStudio.VM
         public RelayCommand LoadProjectCommand { get; set; }
         public RelayCommand CreateNewProjectCommand { get; set; }
 
-        public RelayCommand AddFilterCommand { get; set; }
+        public RelayCommand<string> AddFilterCommand { get; set; }
         public RelayCommand RemoveFilterCommand { get; set; }
         #endregion
 
@@ -76,7 +76,7 @@ namespace FilterStudio.VM
             SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
             LoadProjectCommand = new RelayCommand(LoadProject);
             CreateNewProjectCommand = new RelayCommand(CreateNewProject);
-            AddFilterCommand = new RelayCommand(AddFilter, CanAddFilter);
+            AddFilterCommand = new RelayCommand<string>(AddFilter, CanAddFilter);
             RemoveFilterCommand = new RelayCommand(RemoveFilter, CanRemoveFilter);
         }
 
@@ -150,19 +150,9 @@ namespace FilterStudio.VM
         /// Creates new filter VM with given filter
         /// </summary>
         //TODO: Add presets 
-        private void AddFilter()
+        private void AddFilter(string FilterFactoryID)
         {
-            BasicMatrixFilter concreteFilter = new BasicMatrixFilter
-            (new double[3, 3] {
-                { -1.0, -1.0, -1.0 },
-                { -1.0, 8.0, -1.0 },
-                { -1.0, -1.0, -1.0 }});
-
-
-            FilterVM vm = new FilterVM(concreteFilter)
-            {
-                Name = "Filter #" + Filters.Count
-            };
+            FilterVM vm = FilterFactoryRegister.Factories[FilterFactoryID].CreateNewFilter();
             Filters.Add(vm);
             SelectedFilter = vm;
         }
