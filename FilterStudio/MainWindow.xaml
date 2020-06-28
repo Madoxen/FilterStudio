@@ -24,6 +24,10 @@
             <view:MatrixEditorControl></view:MatrixEditorControl>
         </DataTemplate>
 
+        <DataTemplate x:Key="GaussianMatrixFilterTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
+            <view:MatrixEditorControl></view:MatrixEditorControl>
+        </DataTemplate>
+
 
         <selectors:FilterDesignerTemplateSelector x:Key="DesignerTemplateSelector"></selectors:FilterDesignerTemplateSelector>
     </Window.Resources>
@@ -52,7 +56,10 @@
                 <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Project">
-                <MenuItem Header="Add new filter" Command="{Binding AddFilterCommand}"></MenuItem>
+                <MenuItem Header="Add new filter">
+                    <MenuItem Header="Basic Matrix Filter" Command="{Binding AddFilterCommand}" CommandParameter="BasicFilter"></MenuItem>
+                    <MenuItem Header="Gaussian Filter" Command="{Binding AddFilterCommand}" CommandParameter="GaussianFilter"></MenuItem>
+                </MenuItem>
                 <MenuItem Header="Remove selected filter" Command="{Binding RemoveFilterCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Image">
