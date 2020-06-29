@@ -64,7 +64,9 @@ namespace FilterStudio.VM
         private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
         {
             NullValueHandling = NullValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto
+            TypeNameHandling = TypeNameHandling.Auto,
+            Formatting = Formatting.Indented,
+            
         };
 
         #endregion
