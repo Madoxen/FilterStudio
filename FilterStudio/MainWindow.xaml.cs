@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Globalization;
+using System.Threading;
 
 namespace FilterStudio
 {
@@ -22,7 +24,9 @@ namespace FilterStudio
     {
         public MainWindow()
         {
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl-PL");
             InitializeComponent();
+            
         }
     }
 }
