@@ -1,4 +1,4 @@
-﻿using FilterStudio.Base;
+using FilterStudio.Base;
 using FilterStudio.Concrete;
 using System;
 using System.Collections.Generic;
@@ -218,6 +218,7 @@ namespace FilterStudio.VM
 
             SetData();
         }
+
 
         public override void CopySettings(FilterDataProviderVM provider)
         {
