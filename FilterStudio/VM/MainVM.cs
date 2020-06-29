@@ -18,14 +18,14 @@ namespace FilterStudio.VM
     {
 
         #region Properties
-        private ObservableCollection<FilterVM> filters = new ObservableCollection<FilterVM>();
+        private readonly ObservableCollection<FilterVM> filters = new ObservableCollection<FilterVM>();
         /// <summary>
         /// List of filters that makeup whole project
         /// </summary>
         public ObservableCollection<FilterVM> Filters
         {
             get { return filters; }
-            set { SetProperty(ref filters, value); }
+           // private set { SetProperty(ref filters, value); }
         }
 
         private FilterVM selectedFilter;
@@ -84,7 +84,7 @@ namespace FilterStudio.VM
         #region Project Related Methods
         private void CreateNewProject()
         {
-            Filters = new ObservableCollection<FilterVM>();
+            Filters.Clear();
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace FilterStudio.VM
 
             //TODO: Last used bitmap load
             FilterProject project = JsonConvert.DeserializeObject<FilterProject>(File.ReadAllText(fileName), jsonSerializerSettings);
-            Filters = new ObservableCollection<FilterVM>();
+            Filters.Clear();
             foreach (FilterVMData data in project.filterData)
             {
                 Filters.Add(new FilterVM(data));
@@ -156,7 +156,6 @@ namespace FilterStudio.VM
             Filters.Add(vm);
             SelectedFilter = vm;
         }
-
 
       
         private bool CanAddFilter(object _)

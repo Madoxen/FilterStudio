@@ -110,11 +110,9 @@
                     <RowDefinition MaxHeight="25"/>
                 </Grid.RowDefinitions>
 
-                <Button Command="{Binding ExecutionEngineVM.ExecuteTreeCommand}" Content="Execute"/>
-
-
+                <Button Command="{Binding ExecutionEngineVM.ExecuteTreeCommand}" Content="Execute / Cancel"/>
                 <Grid Grid.Row="2">
-                    <ProgressBar  Maximum="{Binding Filters.Count}" Value="{Binding ExecutionEngineVM.TreeExecutionProgressValue}" x:Name="pbStatus"></ProgressBar>
+                    <ProgressBar  Maximum="{Binding Filters.Count}" Value="{Binding ExecutionEngineVM.TreeExecutionProgressValue, Mode=OneWay}" x:Name="pbStatus"></ProgressBar>
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="{}Executing filter {1} of {0}">
