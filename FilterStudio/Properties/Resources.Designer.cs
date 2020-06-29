@@ -115,7 +115,7 @@ namespace FilterStudio.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Execute.
+        ///   Looks up a localized string similar to Execute / Cancel.
         /// </summary>
         public static string executeButton {
             get {
@@ -300,6 +300,24 @@ namespace FilterStudio.Properties {
         public static string sigmaLabel {
             get {
                 return ResourceManager.GetString("sigmaLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Executing.
+        /// </summary>
+        public static string statusBar1Label {
+            get {
+                return ResourceManager.GetString("statusBar1Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to of.
+        /// </summary>
+        public static string statusBar2Label {
+            get {
+                return ResourceManager.GetString("statusBar2Label", resourceCulture);
             }
         }
     }

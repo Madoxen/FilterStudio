@@ -24,6 +24,7 @@ namespace FilterStudio
     {
         public MainWindow()
         {
+            //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl-PL");
             InitializeComponent();
         }
     }

@@ -20,10 +20,8 @@
             <ListBox HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Matrix, Mode=TwoWay}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Width}" 
-                                 Rows="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Height}"
-                                 Background="Yellow" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-                    </ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 
                 <ListBox.ItemTemplate>

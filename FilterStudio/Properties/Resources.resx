@@ -136,7 +136,7 @@
     <value>Create new project</value>
   </data>
   <data name="executeButton" xml:space="preserve">
-    <value>Execute</value>
+    <value>Execute / Cancel</value>
   </data>
   <data name="fileLabel" xml:space="preserve">
     <value>File</value>
@@ -197,5 +197,11 @@
   </data>
   <data name="sigmaLabel" xml:space="preserve">
     <value>Sigma</value>
+  </data>
+  <data name="statusBar1Label" xml:space="preserve">
+    <value>Executing</value>
+  </data>
+  <data name="statusBar2Label" xml:space="preserve">
+    <value>of</value>
   </data>
 </root>
