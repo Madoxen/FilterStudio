@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FilterStudio.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="400" d:DesignWidth="400" BorderBrush="Black" BorderThickness="1" Background="White">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="0.5*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
@@ -18,17 +18,22 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
+        <Label Content="Sigma:" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <TextBox Grid.Column="1" FontSize="25" Margin="18"
+                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                 Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, 
+                 Path=DataContext.Sigma, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Label>
-            Sigma
-        </Label>
-        <TextBox Grid.Column="1" Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, Path=DataContext.Sigma, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Label Content="Filter Width:" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <TextBox Grid.Column="1" Grid.Row="1" FontSize="20" Margin="18"
+                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                 Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, 
+                 Path=DataContext.Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Label   Grid.Column="0" Grid.Row="1">Filter Width</Label>
-        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, Path=DataContext.Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        <Label   Grid.Column="0" Grid.Row="2">Filter Height</Label>
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, Path=DataContext.Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-
-
+        <Label Content="Filter Height:" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <TextBox Grid.Column="1" Grid.Row="2" FontSize="20" Margin="18"
+                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                 Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, 
+                 Path=DataContext.Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>

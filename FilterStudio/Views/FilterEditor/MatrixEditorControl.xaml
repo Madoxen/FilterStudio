@@ -8,10 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-
-
     <Grid>
-
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition MaxHeight="50"/>
@@ -50,19 +47,11 @@
             </Grid.ColumnDefinitions>
 
 
-            <Button Command="{Binding IncrementWidth}" Grid.Column="0">X++</Button>
-            <Button Command="{Binding DecrementWidth}" Grid.Column="1">X--</Button>
+            <Button Content="Add Row" Command="{Binding IncrementWidth}" Margin="5"/>
+            <Button Content="Remove Row" Command="{Binding DecrementWidth}" Margin="5" Grid.Column="1"/>
 
-            <Button Command="{Binding IncrementHeight}" Grid.Column="2">Y++</Button>
-            <Button Command="{Binding DecrementHeight}" Grid.Column="3">Y--</Button>
+            <Button Content="Add Column" Command="{Binding IncrementHeight}" Margin="5" Grid.Column="2"/>
+            <Button Content="Remove Column" Command="{Binding DecrementHeight}" Margin="5" Grid.Column="3"/>
         </Grid>
-
-
-
     </Grid>
-
-
-
-
-
 </UserControl>
