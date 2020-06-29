@@ -213,7 +213,5 @@ namespace FilterStudio.VM
 
             SetData();
         }
-
-
     }
 }

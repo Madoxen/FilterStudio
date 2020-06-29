@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:FilterStudio.Views"
              xmlns:resx="clr-namespace:FilterStudio.Properties"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Background="#FFEAEAEA">
+             d:DesignHeight="450" d:DesignWidth="800" BorderBrush="Black" BorderThickness="1" Background="White">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -16,26 +16,30 @@
         </Grid.RowDefinitions>
 
         <!--This control allows for binding into the 2D arrays-->
-        <ListBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Matrix, Mode=TwoWay}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Width}" 
-                                 Rows="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Height}"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
 
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <ListBox ItemsSource="{Binding Path=., Mode=TwoWay}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate >
-                                <TextBox Text="{Binding Path=Value, Mode=TwoWay}"></TextBox>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            <ListBox HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Matrix, Mode=TwoWay}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Width}" 
+                                 Rows="{Binding RelativeSource={RelativeSource AncestorType=local:MatrixEditorControl}, Path=DataContext.Height}"
+                                 Background="Yellow" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <ListBox ItemsSource="{Binding Path=., Mode=TwoWay}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Path=Value, Mode=TwoWay}" 
+                                          VerticalContentAlignment="Center" HorizontalAlignment="Center"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
 
         <!--Buttons-->
         <Grid Grid.Row="1">
