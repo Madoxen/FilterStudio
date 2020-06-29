@@ -21,7 +21,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref lastInput, value); }
         }
 
-    
+
         private Bitmap lastOutput;
         public Bitmap LastOutput
         {
@@ -71,7 +71,7 @@ namespace FilterStudio.VM
             get { return underlayingFilter; }
         }
 
-  
+
         private FilterDataProviderVM dataVM;
         public FilterDataProviderVM DataVM
         {
@@ -97,7 +97,11 @@ namespace FilterStudio.VM
             CanReorder = data.CanReorder;
             CanDelete = data.CanDelete;
             Name = data.Name;
-            DataVM = (FilterDataProviderVM)Activator.CreateInstance(data.FilterDataProviderType, this); //Create concrete type, but cast it to base type
+
+            if (data.FilterDataProviderType != null)
+                DataVM = (FilterDataProviderVM)Activator.CreateInstance(data.FilterDataProviderType, this); //Create concrete type, but cast it to base type
+
+            DataVM?.SetData();
         }
 
         /// <summary>

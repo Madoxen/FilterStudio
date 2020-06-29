@@ -28,7 +28,7 @@
         <DataTemplate x:Key="GaussianMatrixFilterTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
             <view:GaussianFilterEditor></view:GaussianFilterEditor>
         </DataTemplate>
-       
+
         <!--This template will be used if DataProvider of selected VM is null-->
         <DataTemplate x:Key="NullTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
             <view:NullEditorView></view:NullEditorView>
@@ -119,17 +119,27 @@
             <!-- Options view-->
             <GroupBox Header="{Binding Source={x:Static resx:Resources.optionsLabel}}" Grid.Row="2" Margin="10" Background="White">
                 <Grid Margin="10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition MaxHeight="25"/>
+                    </Grid.RowDefinitions>
 
-                    <CheckBox Content="{Binding Source={x:Static resx:Resources.liveUpdateLabel}}"/>
-                    <Button Command="{Binding ExecutionEngineVM.ExecuteTreeCommand}" Content="{Binding Source={x:Static resx:Resources.executeButton}}" 
-                            Grid.Column="1" Margin="10, 20"/>
+                    <Button Command="{Binding ExecutionEngineVM.ExecuteTreeCommand}" Content="Execute / Cancel"/>
+                    <Grid Grid.Row="2">
+                        <ProgressBar  Maximum="{Binding Filters.Count}" Value="{Binding ExecutionEngineVM.TreeExecutionProgressValue, Mode=OneWay}" x:Name="pbStatus"></ProgressBar>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}Executing filter {1} of {0}">
+                                    <Binding ElementName="pbStatus" Path="Maximum" />
+                                    <Binding ElementName="pbStatus" Path="Value" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Grid>
 
                 </Grid>
             </GroupBox>
+
         </Grid>
     </Grid>
 </Window>
