@@ -12,6 +12,7 @@ namespace FilterStudio.VM
     /// <summary>
     /// View model for detailed filter view
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class FilterVM : BaseVM
     {
         private Bitmap lastInput;
@@ -29,7 +30,7 @@ namespace FilterStudio.VM
             private set { SetProperty(ref lastOutput, value); }
         }
 
-
+        [JsonProperty]
         private bool canReorder;
         /// <summary>
         /// Indicates if given node can change order in project tree
@@ -40,7 +41,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref canReorder, value); }
         }
 
-
+        [JsonProperty]
         private bool canDelete;
         /// <summary>
         /// Indicates if given node can be deleted
@@ -51,6 +52,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref canDelete, value); }
         }
 
+        [JsonProperty]
         private string name;
         /// <summary>
         /// User editable name
@@ -65,13 +67,14 @@ namespace FilterStudio.VM
         /// Underlaying Core filter
         /// Can be only set by using constructor
         /// </summary>
+        [JsonProperty]
         private readonly IFilter underlayingFilter;
         public IFilter UnderlayingFilter
         {
             get { return underlayingFilter; }
         }
 
-
+        [JsonProperty]
         private FilterDataProviderVM dataVM;
         public FilterDataProviderVM DataVM
         {
@@ -98,10 +101,11 @@ namespace FilterStudio.VM
             CanDelete = data.CanDelete;
             Name = data.Name;
 
-            if (data.FilterDataProviderType != null)
-                DataVM = (FilterDataProviderVM)Activator.CreateInstance(data.FilterDataProviderType, this); //Create concrete type, but cast it to base type
-
-            DataVM?.SetData();
+            if (data.FilterDataProvider != null)
+            {
+                DataVM = (FilterDataProviderVM)Activator.CreateInstance(data.FilterDataProvider.GetType(), this); //Create concrete type, but cast it to base type
+                DataVM.CopySettings(data.FilterDataProvider);
+            }
         }
 
         /// <summary>

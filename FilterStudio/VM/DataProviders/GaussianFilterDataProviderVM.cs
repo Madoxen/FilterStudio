@@ -1,12 +1,15 @@
 ﻿using FilterStudio.Concrete;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FilterStudio.VM
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class GaussianFilterDataProviderVM : FilterDataProviderVM
     {
+        [JsonProperty]
         private double sigma = 1;
         public double Sigma
         {
@@ -14,7 +17,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref sigma, value); SetData(); }
         }
 
-
+        [JsonProperty]
         private int width;
         public int Width
         {
@@ -22,7 +25,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref width, value); SetData(); }
         }
 
-
+        [JsonProperty]
         private int height;
         public int Height
         {
@@ -32,6 +35,9 @@ namespace FilterStudio.VM
 
         private BasicMatrixFilter concreteFilter;
 
+
+        [JsonConstructor]
+        private GaussianFilterDataProviderVM() { } 
 
         public GaussianFilterDataProviderVM(FilterVM filter) : base(filter)
         {
@@ -58,10 +64,20 @@ namespace FilterStudio.VM
                 }
           
             }
-
             concreteFilter.RecalculateMask();
         }
 
-       
+        public override void CopySettings(FilterDataProviderVM provider)
+        {
+            if (!(provider is GaussianFilterDataProviderVM donor))
+                throw new ArgumentException("Donor provider must be of a type GaussianFilterDataProviderVM, was of type:" + provider.GetType().ToString());
+
+            width = donor.Width;
+            height = donor.Height;
+            sigma = donor.Sigma;
+
+
+            SetData();
+        }
     }
 }

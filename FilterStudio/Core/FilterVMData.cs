@@ -14,7 +14,7 @@ namespace FilterStudio.Core
         public bool CanReorder;
         public bool CanDelete;
         public IFilter UnderlayingFilter;
-        public Type FilterDataProviderType;
+        public FilterDataProviderVM FilterDataProvider;
         public string Name;
 
         public FilterVMData()
@@ -25,7 +25,7 @@ namespace FilterStudio.Core
             CanReorder = vm.CanReorder;
             CanDelete = vm.CanDelete;
             UnderlayingFilter = vm.UnderlayingFilter;
-            FilterDataProviderType = vm.DataVM?.GetType();
+            FilterDataProvider = vm.DataVM;
             Name = vm.Name;
         }
 
