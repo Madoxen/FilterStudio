@@ -10,7 +10,7 @@
         xmlns:converters="clr-namespace:FilterStudio.Views.Converters"
         xmlns:concrete="clr-namespace:FilterStudio.Concrete"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Filter Studio" Height="500" Width="900" ResizeMode="CanMinimize">
 
     <Window.DataContext>
         <vm:MainVM/>
@@ -42,6 +42,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
 
@@ -54,7 +55,7 @@
         
         
         <!--Upper menu bar-->
-        <Menu Grid.Row="0" Grid.ColumnSpan="999">
+        <Menu Grid.ColumnSpan="999">
             <MenuItem Header="File">
                 <MenuItem Header="Create new Project..." Command="{Binding CreateNewProjectCommand}"></MenuItem>
                 <MenuItem Header="Open Project..." Command="{Binding LoadProjectCommand}"></MenuItem>
@@ -69,28 +70,31 @@
                 <MenuItem Header="Remove selected filter" Command="{Binding RemoveFilterCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Image">
-                <MenuItem Header="Load..." Command="{Binding ExecutionEngineVM.LoadImageCommand}"></MenuItem>
-                <MenuItem Header="Save..." Command="{Binding ExecutionEngineVM.SaveImageCommand}"></MenuItem>
+                <MenuItem Header="Load image..." Command="{Binding ExecutionEngineVM.LoadImageCommand}"></MenuItem>
+                <MenuItem Header="Save image..." Command="{Binding ExecutionEngineVM.SaveImageCommand}"></MenuItem>
             </MenuItem>
         </Menu>
 
 
         <!--Project view-->
-        <ListView ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter}" Grid.Row="1" Grid.Column="0">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <view:FilterListElement DataContext="{Binding}"></view:FilterListElement>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <GroupBox Grid.Row="1" Header="Project View" Margin="10">
+            <ListView ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter}" Grid.Row="1" Grid.Column="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <view:FilterListElement DataContext="{Binding}"></view:FilterListElement>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </GroupBox>
 
 
         <!--Content control for Filter Designer view note: we could change it with custom user control if you want-->
-        <ContentControl Grid.Column="1" Grid.Row="1" Content="{Binding SelectedFilter.DataVM}" ContentTemplateSelector="{StaticResource DesignerTemplateSelector}"/> 
-        
-        
+        <GroupBox Header="Content control" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="10">
+            <ContentControl Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Content="{Binding SelectedFilter.DataVM}" ContentTemplateSelector="{StaticResource DesignerTemplateSelector}"/>
+        </GroupBox>
+
         <!--Image view-->
-        <Grid Grid.Row="1" Grid.Column="2">
+        <Grid Grid.Row="1" Grid.Column="3">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -98,20 +102,29 @@
             </Grid.RowDefinitions>
 
             <!--Input image-->
-            <Image Source="{Binding SelectedFilter.LastInput, Converter={StaticResource ToBitmapSourceConverter}}" ></Image>
-
+            <GroupBox Header="Input Image" Margin="10">
+                <Image Source="{Binding SelectedFilter.LastInput, Converter={StaticResource ToBitmapSourceConverter}}"/>
+            </GroupBox>
+            
             <!--Output image-->
-            <Image Source="{Binding SelectedFilter.LastOutput, Converter={StaticResource ToBitmapSourceConverter}}" Grid.Row="1"></Image>
+            <GroupBox Header="Output Image" Grid.Row="1" Margin="10">
+                <Image Source="{Binding SelectedFilter.LastOutput, Converter={StaticResource ToBitmapSourceConverter}}" Grid.Row="1"/>
+            </GroupBox>
 
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+            <!-- Options view-->
+            <GroupBox Header="Options" Grid.Row="2" Margin="10">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
-                <CheckBox Content="Live Update" Grid.Column="0"></CheckBox>
-                <Button Command="{Binding ExecutionEngineVM.ExecuteTreeCommand}" Content="Execute" Grid.Column="1"/>
-            </Grid>
+                    <CheckBox Content="Live Update"/>
+                    <Button Command="{Binding ExecutionEngineVM.ExecuteTreeCommand}" Content="Execute" Grid.Column="1" Margin="10, 20"/>
+
+                </Grid>
+            </GroupBox>
+            
         </Grid>
     </Grid>
     
