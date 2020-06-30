@@ -15,7 +15,6 @@ namespace FilterStudio.VM
     public class ExecutionEngineVM : BaseVM
     {
 
-
         private Bitmap currentlyLoadedBitmap;
         /// <summary>
         /// Originally loaded bitmap
@@ -37,65 +36,121 @@ namespace FilterStudio.VM
             set { SetProperty(ref lastOutputBitmap, value); }
         }
 
-
         public RelayCommand ExecuteTreeCommand { get; set; }
+        public RelayCommand CancelExecuteTreeCommand { get; set; }
+
         public RelayCommand LoadImageCommand { get; set; }
         public RelayCommand SaveImageCommand { get; set; }
 
 
-        private readonly ObservableCollection<FilterVM> currentTree;
 
+        private int treeExecutionProgressValue;
+        public int TreeExecutionProgressValue
+        {
+            get { return treeExecutionProgressValue; }
+            private set { SetProperty(ref treeExecutionProgressValue, value); }
+        }
+
+
+        private TaskStatus treeExecutionTaskStatus;
+        public TaskStatus TreeExecutionTaskStatus
+        {
+            get { return treeExecutionTaskStatus; }
+            private set { SetProperty(ref treeExecutionTaskStatus, value); }
+        }
+
+        private readonly ObservableCollection<FilterVM> currentTree;
         private Task executeTreeTask;
-        private CancellationToken executeTreeCancellationToken;
+        private CancellationTokenSource executeTreeCancellationTokenSource;
+        private Progress<int> treeExecutionProgress;
+
+
+
 
         public ExecutionEngineVM(ObservableCollection<FilterVM> currentTree)
         {
             this.currentTree = currentTree;
-
-
             ExecuteTreeCommand = new RelayCommand(StartExecuteTree, CanExecuteTree);
             LoadImageCommand = new RelayCommand(LoadImage);
             SaveImageCommand = new RelayCommand(SaveImage, CanSaveImage);
+            CancelExecuteTreeCommand = new RelayCommand(() => { executeTreeCancellationTokenSource.Cancel(); }, (obj) => { return executeTreeTask.Status == TaskStatus.Running; });
         }
 
 
-
-        public void StartExecuteTree()
+        /// <summary>
+        /// Starts or cancels execution task on another non-UI thread
+        /// </summary>
+        //TODO: Consider spliting this into two methods: start and cancel
+        private void StartExecuteTree()
         {
-            executeTreeCancellationToken = new CancellationToken();
-            executeTreeTask = new Task(ExecuteTree,executeTreeCancellationToken);
-            executeTreeTask.Start();
+            if (executeTreeTask?.Status != TaskStatus.Running && executeTreeTask?.Status != TaskStatus.WaitingForActivation && executeTreeTask?.Status != TaskStatus.WaitingForActivation)
+            {
+                executeTreeCancellationTokenSource = new CancellationTokenSource();
+                TreeExecutionProgressValue = 1;
+                treeExecutionProgress = new Progress<int>();
+                treeExecutionProgress.ProgressChanged += (sender, e) => { TreeExecutionProgressValue = e; };
+                executeTreeTask = new Task(() =>
+                {
+                    try
+                    {
+                        ExecuteTree(treeExecutionProgress, executeTreeCancellationTokenSource.Token);
+                    }
+                    catch (OperationCanceledException ce)
+                    {
+                        TreeExecutionProgressValue = 0;
+                    }
+                }, executeTreeCancellationTokenSource.Token);
+                executeTreeTask.Start();
+            }
+            else
+            {
+                executeTreeCancellationTokenSource.Cancel();
+            }
         }
 
+        /// <summary>
+        /// Action that is called after tree execution
+        /// This runs on UI thread to only update UI
+        /// </summary>
         private void AfterExecuteTree()
-        { 
-            foreach(FilterVM v in currentTree)
-            {
-                v.NotifyUI();
-            }
-        }
-
-
-        private void ExecuteTree()
         {
-            Bitmap currentOutput = currentlyLoadedBitmap;
-            foreach (FilterVM filter in currentTree)
-            {
-                filter.Operate(currentOutput);
-                currentOutput = filter.LastOutput;
-            }
-            LastOutputBitmap = currentTree.Last().LastOutput;
-            Dispatcher.CurrentDispatcher.Invoke(AfterExecuteTree);
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+                {
+                    foreach (FilterVM v in currentTree)
+                    {
+                        v.NotifyUI();
+                    }
+                });
         }
 
-        public bool CanExecuteTree(object _)
+        private void ExecuteTree(IProgress<int> progress, CancellationToken ct)
+        {
+            object lObject = new object();
+            lock (lObject) //lock 
+            {
+                Bitmap currentOutput = currentlyLoadedBitmap;
+                int counter = 1;
+                foreach (FilterVM filter in currentTree)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    filter.Operate(currentOutput);
+                    currentOutput = filter.LastOutput;
+                    progress.Report(counter++);
+                }
+                LastOutputBitmap = currentTree.Last().LastOutput;
+            }
+            AfterExecuteTree();
+            progress.Report(0);
+        }
+
+        private bool CanExecuteTree(object _)
         {
             if (currentTree?.Count > 0 && CurrentlyLoadedBitmap != null)
                 return true;
             return false;
         }
 
-        public void LoadImage()
+        private void LoadImage()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.ShowDialog();
@@ -109,20 +164,18 @@ namespace FilterStudio.VM
             CurrentlyLoadedBitmap = new Bitmap(fileName);
         }
 
-        public void SaveImage()
+        private void SaveImage()
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.ShowDialog();
-            string fileName = fileDialog.FileName; 
-            LastOutputBitmap.Save(fileName); 
+            string fileName = fileDialog.FileName;
+            LastOutputBitmap.Save(fileName);
         }
 
 
-        public bool CanSaveImage(object _)
+        private bool CanSaveImage(object _)
         {
             return LastOutputBitmap != null ? true : false;
         }
-
-
     }
 }

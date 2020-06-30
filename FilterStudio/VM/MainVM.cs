@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using FilterStudio.Concrete;
 using FilterStudio.Core;
+using System.Drawing;
 
 namespace FilterStudio.VM
 {
@@ -17,14 +18,14 @@ namespace FilterStudio.VM
     {
 
         #region Properties
-        private ObservableCollection<FilterVM> filters = new ObservableCollection<FilterVM>();
+        private readonly ObservableCollection<FilterVM> filters = new ObservableCollection<FilterVM>();
         /// <summary>
         /// List of filters that makeup whole project
         /// </summary>
         public ObservableCollection<FilterVM> Filters
         {
             get { return filters; }
-            set { SetProperty(ref filters, value); }
+           // private set { SetProperty(ref filters, value); }
         }
 
         private FilterVM selectedFilter;
@@ -44,7 +45,7 @@ namespace FilterStudio.VM
         public RelayCommand LoadProjectCommand { get; set; }
         public RelayCommand CreateNewProjectCommand { get; set; }
 
-        public RelayCommand AddFilterCommand { get; set; }
+        public RelayCommand<string> AddFilterCommand { get; set; }
         public RelayCommand RemoveFilterCommand { get; set; }
         #endregion
 
@@ -57,48 +58,62 @@ namespace FilterStudio.VM
                 return executionEngineVM;
             }
         }
+
+
+
+        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            TypeNameHandling = TypeNameHandling.Auto,
+            Formatting = Formatting.Indented,
+            
+        };
+
         #endregion
 
 
         public MainVM()
         {
             executionEngineVM = new ExecutionEngineVM(Filters);
-
-
             SaveProjectCommand = new RelayCommand(SaveProject, CanSaveProject);
             LoadProjectCommand = new RelayCommand(LoadProject);
             CreateNewProjectCommand = new RelayCommand(CreateNewProject);
-            AddFilterCommand = new RelayCommand(AddFilter, CanAddFilter);
+            AddFilterCommand = new RelayCommand<string>(AddFilter, CanAddFilter);
             RemoveFilterCommand = new RelayCommand(RemoveFilter, CanRemoveFilter);
         }
 
 
         #region Project Related Methods
-        public void CreateNewProject()
+        private void CreateNewProject()
         {
-            Filters = new ObservableCollection<FilterVM>();
+            Filters.Clear();
         }
 
         /// <summary>
         /// Opens file dialog and if everything's fine, saves project to a JSON file
         /// </summary>
-        public void SaveProject()
+        private void SaveProject()
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.ShowDialog();
             string fileName = fileDialog.FileName;
 
-            //TODO: show error to user?
-            if (!File.Exists(fileName))
-                return;
-
+    
             //TODO: Data save
-
-
+            FilterProject project = new FilterProject();
+         //   project.usedBitmapPath = ExecutionEngineVM.CurrentlyLoadedBitmap.Save("")
+            foreach (FilterVM vm in Filters)
+            {
+                project.filterData.Add(new FilterVMData(vm));
+            }
+            
+            string jsonContents = JsonConvert.SerializeObject(project, jsonSerializerSettings);
+            Debug.WriteLine(jsonContents);
+            File.WriteAllText(fileName, jsonContents);
         }
 
 
-        public bool CanSaveProject(object _)
+        private bool CanSaveProject(object _)
         {
             if (filters != null)
                 return true;
@@ -109,7 +124,7 @@ namespace FilterStudio.VM
         /// <summary>
         /// Opens file dialog and if everything's fine, loads project from JSON file
         /// </summary>
-        public void LoadProject()
+        private void LoadProject()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.ShowDialog();
@@ -119,7 +134,13 @@ namespace FilterStudio.VM
             if (!File.Exists(fileName))
                 return;
 
-            //TODO: Data load
+            //TODO: Last used bitmap load
+            FilterProject project = JsonConvert.DeserializeObject<FilterProject>(File.ReadAllText(fileName), jsonSerializerSettings);
+            Filters.Clear();
+            foreach (FilterVMData data in project.filterData)
+            {
+                Filters.Add(new FilterVM(data));
+            }
         }
 
 
@@ -131,33 +152,28 @@ namespace FilterStudio.VM
         /// Creates new filter VM with given filter
         /// </summary>
         //TODO: Add presets 
-        public void AddFilter()
+        private void AddFilter(string FilterFactoryID)
         {
-            BasicMatrixFilter concreteFilter = new BasicMatrixFilter();
-            concreteFilter.FilterData = new double[3][];
-            concreteFilter.FilterData[0] = new double[] { 1.0, 1.0, 1.0 };
-            concreteFilter.FilterData[1] = new double[] { 1.0, 1.0, 1.0 };
-            concreteFilter.FilterData[2] = new double[] { 1.0, 1.0, 1.0 };
-
-            FilterVM vm = new FilterVM(concreteFilter);
+            FilterVM vm = FilterFactoryRegister.Factories[FilterFactoryID].CreateNewFilter();
             Filters.Add(vm);
             SelectedFilter = vm;
         }
 
-        public bool CanAddFilter(object _)
+      
+        private bool CanAddFilter(object _)
         {
             return Filters != null ? true : false;
         }
 
 
-        public void RemoveFilter()
+        private void RemoveFilter()
         {
             Filters.Remove(SelectedFilter);
             //Set selection to null to avoid little memory leak
             SelectedFilter = null;
         }
 
-        public bool CanRemoveFilter(object _)
+        private bool CanRemoveFilter(object _)
         {
             return (SelectedFilter != null && SelectedFilter.CanDelete) ? true : false;
         }
