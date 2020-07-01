@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace FilterStudio.VM
 {
@@ -64,7 +65,7 @@ namespace FilterStudio.VM
         private CancellationTokenSource executeTreeCancellationTokenSource;
         private Progress<int> treeExecutionProgress;
 
-
+        public string currentlyLoadedBitmapPath { get; private set; }
 
 
         public ExecutionEngineVM(ObservableCollection<FilterVM> currentTree)
@@ -152,16 +153,19 @@ namespace FilterStudio.VM
 
         private void LoadImage()
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.ShowDialog();
-            string fileName = fileDialog.FileName;
+            try
+            {
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                fileDialog.ShowDialog();
+                string fileName = fileDialog.FileName;
 
-            //TODO: show error to user?
-            if (!File.Exists(fileName))
-                return;
-
-
-            CurrentlyLoadedBitmap = new Bitmap(fileName);
+                CurrentlyLoadedBitmap = new Bitmap(fileName);
+                currentlyLoadedBitmapPath = fileName;
+            }
+            catch (IOException)
+            {
+                Debug.WriteLine("Could not load bitmap");
+            }
         }
 
         private void SaveImage()

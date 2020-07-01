@@ -11,7 +11,7 @@
         xmlns:concrete="clr-namespace:FilterStudio.Concrete"
         xmlns:resx="clr-namespace:FilterStudio.Properties"
         mc:Ignorable="d"
-        Title="Filter Studio" Height="500" Width="900" ResizeMode="CanMinimize" Background="#FFEAEAEA">
+        Title="Filter Studio" Height="500" Width="900" Background="#FFEAEAEA">
 
     <Window.DataContext>
         <vm:MainVM/>

@@ -239,9 +239,6 @@ namespace FilterStudio.VM
                 }       
             }
 
-
-
-
             SetData();
         }
     }

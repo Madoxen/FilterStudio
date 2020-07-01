@@ -20,7 +20,7 @@ namespace FilterStudio.Core
         /// <summary>
         /// Bitmap used as reference in this project
         /// </summary>
-        public string usedBitmapName = "default.png";
+        public string usedBitmapPath = "default.png";
 
 
     }

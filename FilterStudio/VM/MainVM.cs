@@ -43,7 +43,7 @@ namespace FilterStudio.VM
         #region Commands
         public RelayCommand SaveProjectCommand { get; set; }
         public RelayCommand LoadProjectCommand { get; set; }
-        public RelayCommand CreateNewProjectCommand { get; set; }
+        public RelayCommand CreateNewProjectCommand { get; set; }  
 
         public RelayCommand<string> AddFilterCommand { get; set; }
         public RelayCommand RemoveFilterCommand { get; set; }
@@ -66,7 +66,6 @@ namespace FilterStudio.VM
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented,
-            
         };
 
         #endregion
@@ -101,11 +100,13 @@ namespace FilterStudio.VM
     
             //TODO: Data save
             FilterProject project = new FilterProject();
+            project.usedBitmapPath = ExecutionEngineVM.currentlyLoadedBitmapPath;
          //   project.usedBitmapPath = ExecutionEngineVM.CurrentlyLoadedBitmap.Save("")
             foreach (FilterVM vm in Filters)
             {
                 project.filterData.Add(new FilterVMData(vm));
             }
+            
             
             string jsonContents = JsonConvert.SerializeObject(project, jsonSerializerSettings);
             Debug.WriteLine(jsonContents);
@@ -126,20 +127,41 @@ namespace FilterStudio.VM
         /// </summary>
         private void LoadProject()
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.ShowDialog();
-            string fileName = fileDialog.FileName;
 
-            //TODO: show error to user?
-            if (!File.Exists(fileName))
-                return;
-
-            //TODO: Last used bitmap load
-            FilterProject project = JsonConvert.DeserializeObject<FilterProject>(File.ReadAllText(fileName), jsonSerializerSettings);
-            Filters.Clear();
-            foreach (FilterVMData data in project.filterData)
+            try
             {
-                Filters.Add(new FilterVM(data));
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                fileDialog.ShowDialog();
+                string fileName = fileDialog.FileName;
+
+                //TODO: Last used bitmap load
+                FilterProject project = JsonConvert.DeserializeObject<FilterProject>(File.ReadAllText(fileName), jsonSerializerSettings);
+                Filters.Clear();
+                foreach (FilterVMData data in project.filterData)
+                {
+                    Filters.Add(new FilterVM(data));
+                }
+                try
+                {
+                    //load image at project path
+                    executionEngineVM.CurrentlyLoadedBitmap = new Bitmap(project.usedBitmapPath);
+                }
+                catch (FileNotFoundException)
+                {
+
+                }
+                catch (ArgumentException)
+                { 
+                
+                }
+            }
+            catch (JsonReaderException jex)
+            {
+                Debug.WriteLine("Could not parse project JSON file. Reason: " + jex.Message);
+            }
+            catch (IOException ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
 
