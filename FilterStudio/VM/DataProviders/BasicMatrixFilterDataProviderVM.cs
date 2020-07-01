@@ -1,4 +1,4 @@
-﻿using FilterStudio.Base;
+using FilterStudio.Base;
 using FilterStudio.Concrete;
 using System;
 using System.Collections.Generic;
@@ -7,28 +7,31 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Linq;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace FilterStudio.VM
 {
-    public class BasicMatrixFilterDataVM : FilterDataVM
+    [JsonObject(MemberSerialization.OptIn)]
+    public class BasicMatrixFilterDataProviderVM : FilterDataProviderVM
     {
+        [JsonProperty]
         private ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>> matrix;
         public ObservableCollection<ObservableCollection<PrimitiveWrapper<double>>> Matrix
         {
             get { return matrix; }
             set
             {
-                if(matrix != null)
+                if (matrix != null)
                     matrix.CollectionChanged -= TopChanged;
 
                 SetProperty(ref matrix, value);
 
-                if(matrix != null)
+                if (matrix != null)
                     matrix.CollectionChanged += TopChanged;
             }
         }
 
-
+        [JsonProperty]
         private int width;
         public int Width
         {
@@ -36,7 +39,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref width, value); }
         }
 
-
+        [JsonProperty]
         private int height;
         public int Height
         {
@@ -45,14 +48,20 @@ namespace FilterStudio.VM
         }
 
 
-        public RelayCommand IncrementHeight { get; set; }
-        public RelayCommand DecrementHeight { get; set; }
-        public RelayCommand IncrementWidth { get; set; }
-        public RelayCommand DecrementWidth { get; set; }
+        public RelayCommand IncrementHeight { get; }
+        public RelayCommand DecrementHeight { get; }
+        public RelayCommand IncrementWidth { get; }
+        public RelayCommand DecrementWidth { get; }
 
 
-        private BasicMatrixFilter concreteFilter;
-        public BasicMatrixFilterDataVM(FilterVM filter) : base(filter)
+        private readonly BasicMatrixFilter concreteFilter;
+
+
+        [JsonConstructor]
+        private BasicMatrixFilterDataProviderVM() { }
+
+
+        public BasicMatrixFilterDataProviderVM(FilterVM filter) : base(filter)
         {
             if (!(filter.UnderlayingFilter is BasicMatrixFilter))
                 throw new ArgumentException("BasicMatrixFilterDataVM can only handle BasicMatrixFilter type of underlaying filter (is: " + filter.UnderlayingFilter.GetType() + " | must be: BasicMatrixFilter)");
@@ -66,11 +75,24 @@ namespace FilterStudio.VM
             IncrementWidth = new RelayCommand(() => { Width++; });
             DecrementWidth = new RelayCommand(() => { Width--; }, (_) => { return Width > 1; });
 
+
+            for (int i = 0; i < concreteFilter.FilterData.GetLength(0); i++)
+            {
+                Matrix.Add(new ObservableCollection<PrimitiveWrapper<double>>());
+                for (int j = 0; j < concreteFilter.FilterData.GetLength(1); j++)
+                {
+                    Matrix[i].Add(new PrimitiveWrapper<double>(concreteFilter.FilterData[i, j]));
+                }
+            }
+            Width = Matrix.Count;
+            Height = Matrix[0].Count;
+
+
             this.PropertyChanged += OnDimensionsChanged;
         }
 
 
-        public BasicMatrixFilterDataVM(FilterVM filter, double[,] data) : this(filter)
+        public BasicMatrixFilterDataProviderVM(FilterVM filter, double[,] data) : this(filter)
         {
             for (int i = 0; i < data.GetLength(0); i++)
             {
@@ -137,10 +159,6 @@ namespace FilterStudio.VM
         }
 
 
-
- 
-
-
         public override void SetData()
         {
             concreteFilter.FilterData = new double[matrix.Count, matrix[0].Count];
@@ -151,7 +169,7 @@ namespace FilterStudio.VM
                     concreteFilter.FilterData[i, j] = Matrix[i][j].Value;
                 }
             }
-            concreteFilter.OnFilterDataChanged();
+            concreteFilter.RecalculateMask();
         }
 
         private void OnDimensionsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -202,5 +220,26 @@ namespace FilterStudio.VM
         }
 
 
+        public override void CopySettings(FilterDataProviderVM provider)
+        {
+            if (!(provider is BasicMatrixFilterDataProviderVM donor))
+                throw new ArgumentException("Donor provider must be of a type BasicMatrixFilterDataProviderVM, was of type:" + provider.GetType().ToString());
+
+            Height = donor.Height;
+            Width = donor.Width;
+            Matrix = donor.Matrix;
+
+            //subscribe to all events
+            foreach (ObservableCollection<PrimitiveWrapper<double>> oc in Matrix)
+            {
+                oc.CollectionChanged += MidChanged;
+                foreach (PrimitiveWrapper<double> pw in oc)
+                {
+                    pw.PropertyChanged += BotChanged;
+                }       
+            }
+
+            SetData();
+        }
     }
 }

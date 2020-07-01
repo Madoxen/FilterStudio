@@ -11,8 +11,16 @@ namespace FilterStudio.Views.Selectors
 {
     public class FilterDesignerTemplateSelector : DataTemplateSelector
     {
+        private readonly static Dictionary<Type, string> DataProviderToViewTemplateDictionary = new Dictionary<Type, string>()
+        {
+            [typeof(BasicMatrixFilterDataProviderVM)] = "BasicMatrixFilterTemplate",
+            [typeof(GaussianFilterDataProviderVM)] = "GaussianMatrixFilterTemplate",
+        };
 
-        /// <summary>
+        private readonly static string FallbackTemplateID = "NullTemplate";
+
+
+         /// <summary>
         /// Selects DataTemplate baseing on IFilter concrete type
         /// </summary>
         /// <param name="item"></param>
@@ -25,25 +33,17 @@ namespace FilterStudio.Views.Selectors
             {
                 return null;
             }
-            if (item == null || !(item is FilterDataVM))
+            if (item == null || !(item is FilterDataProviderVM))
             {
-               //throw new ApplicationException();
+                //throw new ApplicationException();
                 return null;
             }
-            if ((item as FilterDataVM) is BasicMatrixFilterDataVM) //So this might seem like it's breaking Liskov, buuut we really cant do it other way, without creating whole plugin system
-                //which is not the premise of this project (deadlines boiz).
+            else
             {
-                return elem.FindResource("BasicMatrixFilterTemplate") as DataTemplate;
-            }
-            if ((item as FilterDataVM) is GaussianFilterDataVM) //So this might seem like it's breaking Liskov, buuut we really cant do it other way, without creating whole plugin system
-                                                                   //which is not the premise of this project (deadlines boiz).
-            {
-                return elem.FindResource("GaussianMatrixFilterTemplate") as DataTemplate;
+                string templateID = DataProviderToViewTemplateDictionary.GetValueOrDefault(item.GetType(), FallbackTemplateID);
+                return elem.FindResource(templateID) as DataTemplate;
             }
             throw new ApplicationException();
         }
-
-
-
     }
 }

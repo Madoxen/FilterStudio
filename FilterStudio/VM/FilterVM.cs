@@ -1,4 +1,5 @@
-﻿using FilterStudio.Interfaces;
+﻿using FilterStudio.Core;
+using FilterStudio.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,16 @@ namespace FilterStudio.VM
     /// <summary>
     /// View model for detailed filter view
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class FilterVM : BaseVM
     {
-
         private Bitmap lastInput;
         public Bitmap LastInput
         {
             get { return lastInput; }
             set { SetProperty(ref lastInput, value); }
         }
+
 
         private Bitmap lastOutput;
         public Bitmap LastOutput
@@ -28,7 +30,7 @@ namespace FilterStudio.VM
             private set { SetProperty(ref lastOutput, value); }
         }
 
-
+        [JsonProperty]
         private bool canReorder;
         /// <summary>
         /// Indicates if given node can change order in project tree
@@ -39,7 +41,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref canReorder, value); }
         }
 
-
+        [JsonProperty]
         private bool canDelete;
         /// <summary>
         /// Indicates if given node can be deleted
@@ -50,6 +52,7 @@ namespace FilterStudio.VM
             set { SetProperty(ref canDelete, value); }
         }
 
+        [JsonProperty]
         private string name;
         /// <summary>
         /// User editable name
@@ -64,14 +67,16 @@ namespace FilterStudio.VM
         /// Underlaying Core filter
         /// Can be only set by using constructor
         /// </summary>
+        [JsonProperty]
         private readonly IFilter underlayingFilter;
         public IFilter UnderlayingFilter
         {
             get { return underlayingFilter; }
         }
 
-        private FilterDataVM dataVM;
-        public FilterDataVM DataVM
+        [JsonProperty]
+        private FilterDataProviderVM dataVM;
+        public FilterDataProviderVM DataVM
         {
             get { return dataVM; }
             set { SetProperty(ref dataVM, value); }
@@ -80,13 +85,29 @@ namespace FilterStudio.VM
 
         public FilterVM(IFilter UnderlayingFilter)
         {
-            underlayingFilter = UnderlayingFilter;
+            underlayingFilter = UnderlayingFilter; //this will be later chosen by presets
             LastInput = UnderlayingFilter.Input;
             LastOutput = UnderlayingFilter.Output;
-            DataVM = new BasicMatrixFilterDataVM(this, new double[3, 3] {
-                { -1.0, -1.0, -1.0 },
-                { -1.0, 8.0, -1.0 },
-                { -1.0, -1.0, -1.0 }}); //for now just use concrete 
+            CanDelete = true;
+            CanReorder = true;
+        }
+
+        /// <summary>
+        /// Creates new filter VM using saved data object
+        /// </summary>
+        /// <param name="data"></param>
+        public FilterVM(FilterVMData data)
+        {
+            underlayingFilter = data.UnderlayingFilter;
+            CanReorder = data.CanReorder;
+            CanDelete = data.CanDelete;
+            Name = data.Name;
+
+            if (data.FilterDataProvider != null)
+            {
+                DataVM = (FilterDataProviderVM)Activator.CreateInstance(data.FilterDataProvider.GetType(), this); //Create concrete type, but cast it to base type
+                DataVM.CopySettings(data.FilterDataProvider);
+            }
         }
 
         /// <summary>
