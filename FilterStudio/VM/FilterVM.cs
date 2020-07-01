@@ -88,6 +88,8 @@ namespace FilterStudio.VM
             underlayingFilter = UnderlayingFilter; //this will be later chosen by presets
             LastInput = UnderlayingFilter.Input;
             LastOutput = UnderlayingFilter.Output;
+            CanDelete = true;
+            CanReorder = true;
         }
 
         /// <summary>

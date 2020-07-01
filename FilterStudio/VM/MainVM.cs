@@ -184,7 +184,7 @@ namespace FilterStudio.VM
       
         private bool CanAddFilter(object _)
         {
-            return Filters != null ? true : false;
+            return Filters != null;
         }
 
 
@@ -197,7 +197,7 @@ namespace FilterStudio.VM
 
         private bool CanRemoveFilter(object _)
         {
-            return (SelectedFilter != null && SelectedFilter.CanDelete) ? true : false;
+            return (SelectedFilter != null && SelectedFilter.CanDelete);
         }
 
         #endregion

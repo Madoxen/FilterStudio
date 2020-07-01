@@ -146,9 +146,7 @@ namespace FilterStudio.VM
 
         private bool CanExecuteTree(object _)
         {
-            if (currentTree?.Count > 0 && CurrentlyLoadedBitmap != null)
-                return true;
-            return false;
+            return (currentTree?.Count > 0 && CurrentlyLoadedBitmap != null);
         }
 
         private void LoadImage()
@@ -179,7 +177,7 @@ namespace FilterStudio.VM
 
         private bool CanSaveImage(object _)
         {
-            return LastOutputBitmap != null ? true : false;
+            return LastOutputBitmap != null;
         }
     }
 }
