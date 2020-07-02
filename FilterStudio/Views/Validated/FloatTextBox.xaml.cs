@@ -25,17 +25,22 @@ namespace FilterStudio.Views.Validated
             InitializeComponent();
         }
 
+ 
+
         private static string GetNumbers(string input)
         {
-            char sep = ',';
+            char sep = '.';
 
-            string old = new string(input.Where(c => char.IsDigit(c) || c == sep).ToArray());
 
-            if (old[0] == '.')
+            string old = new string(input.Where(c => char.IsDigit(c) || c == ',' || c=='.').ToArray());
+
+            if (old.Length>0 && (old[0] == '.' || old[0] == ','))
             {
                 old = '0' + old;
             }
             
+            old.Replace(',', sep);
+
             string neww = "";
             int numdots = 0;
             for (int i = 0; i < old.Length; i++)
@@ -73,17 +78,17 @@ namespace FilterStudio.Views.Validated
                 return;
             double n;
 
+            //if(InputTextBox.Text.Length==1 && InputTextBox.Text[0].)
+
             if (!double.TryParse(InputTextBox.Text, out n) && InputTextBox.Text.Length>0)
             {
-                int t = InputTextBox.CaretIndex;
                 InputTextBox.Text = GetNumbers(InputTextBox.Text);
-                if (t > 0) t--;
-                InputTextBox.CaretIndex = t;
+                InputTextBox.CaretIndex = InputTextBox.Text.Length;
             }
 
             if (InputTextBox.Text != "")
             {
-                InputTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                InputTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource(); //fix here
             }
 
 
