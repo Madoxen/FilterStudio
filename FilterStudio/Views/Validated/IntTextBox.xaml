@@ -7,7 +7,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" x:Name="Root">
     <Grid>
-        <TextBox x:Name="InputTextBox" VerticalContentAlignment="Center" Text="{Binding ElementName=Root,UpdateSourceTrigger=Explicit, Path=Text, Mode=TwoWay}"  TextChanged="CheckForInvalidState" Loaded="CheckForInvalidState" GotFocus="CheckForInvalidState" LostFocus="CheckForInvalidState">
-        </TextBox>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="InputTextBox" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                 Text="{Binding ElementName=Root,UpdateSourceTrigger=Explicit, Path=Text, Mode=TwoWay}"  TextChanged="CheckForInvalidState" Loaded="CheckForInvalidState" GotFocus="CheckForInvalidState" LostFocus="CheckForInvalidState"/>
     </Grid>
 </UserControl>
