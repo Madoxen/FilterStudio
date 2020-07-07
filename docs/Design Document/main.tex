@@ -1,7 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage{polski}
-
+\usepackage{graphicx}
 
 \begin{titlepage}
     \title{FilterStudio Design Document}    
@@ -60,6 +60,50 @@ This feature allows users for viewing last input and output of individual filter
 \subsection{Image Saving}
 This feature allows users to save individual images from filters or filter groups.
 
+\newpage
+\section{User's Manual}
+This section provides information about usage of the FilterStudio application.
+
+\subsection{Overview}
+
+\bigskip
+\includegraphics[width=0.9\textwidth]{overview.png}
+
+\begin{itemize}
+    \item \emph{Project View} -- Lists all active filters and allows user to navigate and edit them by clicking.
+    \item \emph{Content Control} -- Alows user to edit filters, see "Gaussian Filter" and "Basic Matrix Filters" sections
+    \item \emph{Input Image} -- Shows chosen input image thumbnail
+    \item \emph{Output Image} -- Shows filtered image preview thumbnail
+    \item \emph{Options} -- This section contains button that allows user to render filtered image and a progress indicator.
+\end{itemize}
+
+\newpage
+\subsection{Gausian Filter}
+To add Gaussian Filter to project click \textbf{Project $\rightarrow$ Add New Filter $\rightarrow$ Gaussian Filter},
+
+\bigskip
+\includegraphics[width=0.9\textwidth]{gauss.png}
+\bigskip
+
+and enter parameters into appropriate textboxes.
+
+\subsection{Basic Matrix Filter}
+To add Gaussian Filter to project click \textbf{Project $\rightarrow$ Add New Filter $\rightarrow$ Basic Matrix Filter},
+
+\bigskip
+\includegraphics[width=0.9\textwidth]{matrix.png}
+\bigskip
+
+adjutst matrix dimmensions with buttons visible in bottom part of \textbf{Content Control} and enter values into cells.
+
+\subsection{Greyscale Filter}
+To add Gaussian Filter to project click \textbf{Project $\rightarrow$ Add New Filter $\rightarrow$ Greyscale Filter}
+
+\subsection{Loading, saving and creating projects}
+All this features are available in \textbf{File} menu and works in standard Windows manner.
+
+\subsection{Loading and saving images}
+Both features are available in \textbf{Image} menu and works in standard Windows manner.
 
 
 \end{document}
