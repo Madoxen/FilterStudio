@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FilterStudio.Views"
              xmlns:resx="clr-namespace:FilterStudio.Properties"
+             xmlns:validated="clr-namespace:FilterStudio.Views.Validated"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="400" BorderBrush="Black" BorderThickness="1" Background="White">
     <Grid>
@@ -20,20 +21,21 @@
         </Grid.RowDefinitions>
 
         <Label Content="{Binding Source={x:Static resx:Resources.sigmaLabel}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
-        <TextBox Grid.Column="1" FontSize="20" Margin="18"
-                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        <validated:FloatTextBox Grid.Column="1" FontSize="20" Margin="18"
+                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                  Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, 
                  Path=DataContext.Sigma, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <Label Content="{Binding Source={x:Static resx:Resources.filterWidthLabel}}" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
-        <TextBox Grid.Column="1" Grid.Row="1" FontSize="20" Margin="18"
-                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+
+        <validated:IntTextBox Grid.Column="1" Grid.Row="1" FontSize="20" Margin="18"
+                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                  Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, 
                  Path=DataContext.Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <Label Content="{Binding Source={x:Static resx:Resources.filterHeightLabel}}" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
-        <TextBox Grid.Column="1" Grid.Row="2" FontSize="20" Margin="18"
-                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+        <validated:IntTextBox Grid.Column="1" Grid.Row="2" FontSize="20" Margin="18"
+                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                  Text="{Binding RelativeSource={RelativeSource AncestorType=local:GaussianFilterEditor}, 
                  Path=DataContext.Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
