@@ -1,4 +1,5 @@
 ﻿using FilterStudio.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,6 +14,7 @@ namespace FilterStudio.Concrete
     /// Produces grayscale of an image
     /// Grayscale is simp
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class GrayscaleFilter : IFilter
     {
         public Bitmap Output { get; private set; }

@@ -6,6 +6,7 @@
              xmlns:converters="clr-namespace:FilterStudio.Views.Converters"
              xmlns:local="clr-namespace:FilterStudio.Views"
              xmlns:resx="clr-namespace:FilterStudio.Properties"
+             xmlns:validated="clr-namespace:FilterStudio.Views.Validated"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" BorderBrush="Black" BorderThickness="1" Background="White">
 
@@ -29,7 +30,7 @@
                         <ListBox ItemsSource="{Binding Path=., Mode=TwoWay}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBox Text="{Binding Path=Value, Mode=TwoWay}" 
+                                <validated:FloatTextBox Text="{Binding Path=Value, Mode=TwoWay}" 
                                           VerticalContentAlignment="Center" HorizontalAlignment="Center"/>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

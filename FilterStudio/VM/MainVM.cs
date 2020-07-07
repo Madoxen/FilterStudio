@@ -155,7 +155,7 @@ namespace FilterStudio.VM
                 
                 }
             }
-            catch (JsonReaderException jex)
+            catch (JsonException jex)
             {
                 Debug.WriteLine("Could not parse project JSON file. Reason: " + jex.Message);
             }

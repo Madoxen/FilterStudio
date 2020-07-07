@@ -1,4 +1,5 @@
 ﻿using FilterStudio.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,13 +16,14 @@ namespace FilterStudio.Concrete
     /// <summary>
     /// This filter assumes that we are using square arrays
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class BasicMatrixFilter : IFilter
     {
 
         public Bitmap Output { get; private set; }
         public Bitmap Input { get; set; }
 
-
+        [JsonProperty]
         public double[,] FilterData { get; set; }
         private double maskSum = 1;
 
