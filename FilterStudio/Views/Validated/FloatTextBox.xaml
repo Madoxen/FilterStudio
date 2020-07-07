@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FilterStudio.Views"
+             xmlns:validators="clr-namespace:FilterStudio.Views.Validators"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="800" x:Name="Root"
              >
@@ -14,9 +15,15 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBox Grid.Row="1" Grid.Column="1" x:Name="InputTextBox" Text="{Binding ElementName=Root,UpdateSourceTrigger=Explicit, Path=Text, Mode=TwoWay}"
-                    TextChanged="CheckForInvalidState" Loaded="CheckForInvalidState" GotFocus="CheckForInvalidState" LostFocus="CheckForInvalidState"
-                    VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TextBox x:Name="InputTextBox" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                 LostFocus="CheckForInvalidState">
+            <TextBox.Text>
+                <Binding ElementName="Root" UpdateSourceTrigger="LostFocus" Path="Text" Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validators:FloatRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
         </TextBox>
     </Grid>
 </UserControl>

@@ -24,10 +24,6 @@ namespace FilterStudio.Views.Validated
             InitializeComponent();
         }
 
-        private static string GetNumbers(string input)
-        {
-            return new string(input.Where(c => char.IsDigit(c)).ToArray());
-        }
 
         public object Text
         {
@@ -40,22 +36,7 @@ namespace FilterStudio.Views.Validated
 
         private void CheckForInvalidState(object sender, RoutedEventArgs e)
         {
-
-            if (!(sender is TextBox))
-                return;
-            int n;
-
-            if (!int.TryParse(InputTextBox.Text, out n))
-            {
-                int t = InputTextBox.CaretIndex;
-                InputTextBox.Text = GetNumbers(InputTextBox.Text);
-                if (t > 0) t--;
-                InputTextBox.CaretIndex = t;
-            }
-            if (InputTextBox.Text != "")
-            {
-                InputTextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            }
+            return;
         }
     }
-}
+    }
