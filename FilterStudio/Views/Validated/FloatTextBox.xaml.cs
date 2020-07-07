@@ -34,9 +34,5 @@ namespace FilterStudio.Views.Validated
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(FloatTextBox));
 
-        private void CheckForInvalidState(object sender, RoutedEventArgs e)
-        {
-            return;
-        }
     }
 }

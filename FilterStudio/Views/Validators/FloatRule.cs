@@ -19,8 +19,18 @@ namespace FilterStudio.Views.Validators
 
             try
             {
-                if (((string)value).Length > 0)
-                    val = double.Parse((String)value,CultureInfo.InvariantCulture);
+                if (((string)value).Length > 0 )
+                {
+                    if (((string)value)[((string)value).Length - 1] == '.')
+                    {
+                        return new ValidationResult(false, "Expression ends with dot");
+                    }
+                    val = double.Parse((String)value, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    return new ValidationResult(false, "Length == 0!");
+                }
             }
             catch (Exception e)
             {

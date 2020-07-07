@@ -20,7 +20,13 @@ namespace FilterStudio.Views.Validators
             try
             {
                 if (((string)value).Length > 0)
-                    val = Int32.Parse((String)value);
+                {
+                val = Int32.Parse((String)value);
+                }
+                else
+                {
+                    return new ValidationResult(false, "Length == 0!");
+                }
             }
             catch (Exception e)
             {
