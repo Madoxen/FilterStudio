@@ -3,7 +3,7 @@
 \usepackage{polski}
 \usepackage{multirow}
 \usepackage[margin=2.5cm]{geometry}
-
+\usepackage{amsmath}
 
 
 \title{Programowanie Obiektowe i Graficzne\\
@@ -33,7 +33,7 @@ Projekt zespołowy\\
 
 \section{Opis projektu}
 FilterStudio to aplikacja pozwalająca na budowanie systemów filtrów do zdjęć. Najczęściej są to filtry konwolucyjne, ale architektura aplikacji pozwala
-na dołączanie innych rodzajów filtrów.
+na dołączanie innych rodzajów filtrów. Użytkownik może wprowadzić zdjęcie i zmodyfikować je za pomocą filtrów.
 \section{Wymagania}
 Projekt spełnia następujące założenia funkcjonalne:
 \begin{itemize}
@@ -52,17 +52,105 @@ Założenia niefunkcjonalne są następujące:
 
 
 \section{Przebieg realizacji}
-Każdy z wykonawców opisuje wykonane przez siebie zadania. Należy zamieścić ewentualnie schemat bazy danych (gdy aplikacja jest bazodanowa), opis algorytmu, gdy aplikacja jest związana z SSI lub inną algorytmiką. W przypadku zastosowania wzorców projektowych proszę to tu podkreślić. Należy też zwrócić uwagę na architekturę aplikacji tzn. jeśli używacie MVVM to podkreślamy tu to.
-W miejscu tym należy opisać interfejs publiczny stworzonych w ramach projektu klas. Mile widziane diagramy uml.
-\section{Instrukcja użytkownika}
-Opis działania stworzonej aplikacji ze zrzutami ekranów ilustrujące sposób działania aplikacji.
-\section{Podsumowanie i wnioski}
-W miejscu tym piszemy co zrealizowaliśmy, z czym były problemy. Jakie są dalsze kierunki rozwoju tej aplikacji.  
-\section{Dodatek - udokumentowanie wykorzystania systemu kontroli wersji}
-(może być zrzut/zrzuty ekranu pokazujące, że do realizacji użyliście Państwo systemu kontroli wersji  - wymaga tego efekt E7)
+%Każdy z wykonawców opisuje wykonane przez siebie zadania. Należy zamieścić ewentualnie schemat bazy danych (gdy aplikacja jest bazodanowa), opis algorytmu, gdy aplikacja jest związana z SSI lub inną algorytmiką. W przypadku zastosowania wzorców projektowych proszę to tu podkreślić. Należy też zwrócić uwagę na architekturę aplikacji tzn. jeśli używacie MVVM to podkreślamy tu to.
+%W miejscu tym należy opisać interfejs publiczny stworzonych w ramach projektu klas. Mile widziane diagramy uml.
 
-Uwaga - do dokumentacji proszę nie wklejać całego kodu aplikacji.  W sekcji realizacja można zmieścić fragmenty kodu, jeśli chcecie zwrócić uwagę na coś co było bardzo wymagające i konieczne jest dogłębnego jego omówienia. 
-Poza tym proszę komentować kod aplikacji - to jest istotna część dokumentacji projektu.
+\subsection{Architektura}
+Aplikacja została z góry zaprojektowana tak, aby współgrała ze wzorcem MVVM. Ważnym było też zapewnienie rozszerzalności projektu o dodatkowe rodzaje filtrów i 
+możliwości budowania owych filtrów. Aby wspierać różne rodzaje filtrów, posłużyliśmy się wzorcem \textbf{strategii}, zamknęliśmy filtry za jednolitym interfejsem, dzięki czemu
+mogliśmy napisać obsługę wielu rodzajów filtrów. Później w trakcie prac okazało się iż potrzebujemy sposobu na dostarczanie \textit{różnych} danych do \textit{różnych} typów filtrów.
+Problem rozwiązaliśmy poprzez wprowadzenie \textbf{fabryki abstrakcyjnej}, dzięki czemu mogliśmy, tak samo jak w przypadku strategii, posługiwać się interfejsem
+do różnych fabryk, zamiast używać konkretnych obiektów. Następnym problemem było dostarczanie użytkownikom sposobu zmiany istniejących już filtrów (fabryka rozwiązuje tylko problem kreowania ich),
+zostało rozwiązane to poprzez użycie klasy abstrakcyjnej \textbf{FilterDataProviderVM}, która służy jako baza dla klas ViewModel, mających obsługiwać interakcję użytkownika z 
+danymi filtrów. Każdy FilterDataProviderVM jest pewnym sposobem dzięki któremu dane mogą trafić do filtra. Do jednego typu filtra może nawet być przypisane wiele
+sposobów dostarczania danych, np. filtr gaussowski nadal jest filtrem konwolucyjnym, nie miałoby sensu tworzyć osobnej klasy filtra, który robi to samo co zwykły
+filtr, ale filtr gaussowski tworzymy inaczej niż filtr zwykły (poprzez określenie parametrów takich jak odchylenie standardowe). Naturalnym więc było, dostarczenie klas
+odpowiedzialnych tylko za tworzenie i przekazywanie danych do filtrów.
+
+\subsection{Filtry Konwolucyjne}
+Filtr konwolucyjny jest podstawą programu. Jego budowa i działanie są następujące:
+
+Filtr składa się z macierzy 2D, która reprezentuje \textit{maskę} filtru:
+
+\begin{gather}
+    F = 
+       \begin{vmatrix}
+        f_{11} & f_{12} & f_{13}\\
+        f_{21} & f_{22} & f_{23}\\
+        f_{31} & f_{32} & f_{33}\\
+        \end{vmatrix}
+\end{gather}
+
+Obraz to tak naprawdę macierz pixeli, którą oznaczymy jako $I$.
+Proces nakładania filtru wygląda następująco:
+
+\begin{gather}
+    F * I = \sum_{dx = -a}^{a} \sum_{dy = -b}^{b} f_{dxdy} \cdot i_{x+dx, y+dy}
+\end{gather}
+
+Gdzie x i y to pixel obrazu który będzie zmieniony po tej operacji. Cała operacja $F*I$ 
+zwróci nam obraz po przejściu przez filtr. Jak wiemy obrazy nie składają się tylko 
+z jednego koloru (u nas RGB) więc tą operację powtarzamy dla wszystkich kanałów osobno.
+
+W naszej implementacji zastosowaliśmy także normalizację która opiera się na prostym dzieleniu
+przez sumę wszystkich elementów filtra. Dzięki temu z filtrem, który nie jest zbalansowany (czyli jego suma
+nie jest równa 0) nie otrzymujemy prześwietlonych/przyciemnionych obrazów.
+
+Przy używaniu filtrów konwolucyjnych pojawia się problem brzegów. W naszej implementacji pomijamy
+piksele które wychodzą poza obszar obrazu.
+
+
+
+
+
+
+
+
+
+\section{Instrukcja użytkownika}
+%Opis działania stworzonej aplikacji ze zrzutami ekranów ilustrujące sposób działania aplikacji.
+\section{Podsumowanie i wnioski}
+%W miejscu tym piszemy co zrealizowaliśmy, z czym były problemy. Jakie są dalsze kierunki rozwoju tej aplikacji.  
+Zrealizowaliśmy pełnoprawny projekt w technologii WPF razem z wdrożeniem wielu wzorców projektowych oraz pomyślnie
+wykorzystaliśmy system kontroli wersji \textit{git}.
+\subsection{Problemy}
+Dużym problemem na początku tworzenia aplikacji było oddzielenie wątku wykonywania filtrów od głównego wątku UI i aplikacji.
+Kod wielowątkowy wielokrotnie wyrzucał wyjątki dot. synchronizacji zapisu/odczytu danych ze zmiennych.
+Poradziliśmy sobie z problemem poprzez użycie derektyw \textbf{lock} oraz poprzez kopiowanie obiektów bitmap do filtrów 
+(tworzyliśmy kopię oryginału znajdującego się w VM), dzięki czemu filtr mógł na osobności operować na bitmapie.
+
+Następnym problemem była optymalizacja filtru konwolucyjnego, problemem były metody GetPixel i SetPixel z klasy Bitmap,
+te metody, za każdym razem kiedy zostaną wywołane, wywołują tak naprawdę funkcję w gdiplus.dll poprzez mechanizm P/Invoke.
+Przy bitmapie 1000x1000 wywołujemy P/Invoke milion razy!!! (w sumie to dwa bo jeszcze SetPixel)
+Problem obeszliśmy poprzez skopiowanie surowych danych bitmapy a następnie operowaliśmy na surowych danych filtrem.
+Na koniec kopiujemy wszystkie bajty z powrotem do obiektu bitmapy za pomocą klasy Marshall.
+Wszystko by było dobrze, gdyby nie fakt iż długość jednej linii bitmapy jest zawsze wielokrotnością 4 w bajtach.
+Więc musieliśmy także uwzględnić padding bitmapy (na szczęście Bitmap udostępnia nam taką informację w właściwości stride)
+Nasze rozwiązanie jest około dziesięcio-krotnie razy szybsze od Get/SetPixel.
+Najlepszym sposobem przyspieszenia filtrów wszelkiego rodzaju, byłoby jednak użycie
+GPU, ale to zostawiamy na przyszłość.
+
+
+
+\subsection{Dalszy rozwój}
+Opcji na rozwój programu jest dużo:
+\begin{itemize}
+    \item Przeniesienie operacji filtrów na GPU 
+    \item Dodanie nowych filtrów
+    \item Dodanie nowych sposobów na tworzenie filtrów
+    \item Rozdzielenie kanałów obrazu, możliwość wpływania na dowolny kanał, drzewo filtrów
+    \item Możliwość kompilacji drzewa do programu standalone (masowe przetwarzanie zdjęć)
+    \item Przetwarzanie filmów (film to seria zdjęć)
+    \item Lepsze UI, przeniesienie projektu na bardziej przyszłościową bibliotekę UI
+\end{itemize}
+
+
+\section{Dodatek - udokumentowanie wykorzystania systemu kontroli wersji}
+Repozytorium znajduje się pod adresem: https://github.com/Madoxen/FilterStudio
+%(może być zrzut/zrzuty ekranu pokazujące, że do realizacji użyliście Państwo systemu kontroli wersji  - wymaga tego efekt E7)
+
+%Uwaga - do dokumentacji proszę nie wklejać całego kodu aplikacji.  W sekcji realizacja można zmieścić fragmenty kodu, jeśli chcecie zwrócić uwagę na coś co było bardzo wymagające i konieczne jest dogłębnego jego omówienia. 
+%Poza tym proszę komentować kod aplikacji - to jest istotna część dokumentacji projektu.
 
 
 
