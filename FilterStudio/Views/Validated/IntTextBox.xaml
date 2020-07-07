@@ -14,10 +14,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBox x:Name="InputTextBox" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                    LostFocus="CheckForInvalidState">
+        <TextBox x:Name="InputTextBox" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TextBox.Text>
-                <Binding ElementName="Root" UpdateSourceTrigger="LostFocus" Path="Text" Mode="TwoWay">
+                <Binding ElementName="Root" UpdateSourceTrigger="PropertyChanged" Path="Text" Mode="TwoWay">
                     <Binding.ValidationRules>
                         <validators:IntRule/>
                     </Binding.ValidationRules>

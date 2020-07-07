@@ -38,7 +38,5 @@ namespace FilterStudio.Views.Validated
         {
             return;
         }
-
-
     }
 }
