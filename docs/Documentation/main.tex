@@ -4,7 +4,7 @@
 \usepackage{multirow}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{amsmath}
-
+\usepackage{graphicx}
 
 \title{Programowanie Obiektowe i Graficzne\\
 Projekt zespołowy\\
@@ -18,13 +18,14 @@ Projekt zespołowy\\
 \begin{center}
     \begin{tabular}{ |c|c|c| }
         \hline
-        Imię Nazwisko                  & Odpowiedzialny za                        & Zrealizował zadania                      \\ \hline
-        \multirow{3}{*}{Paweł Chłąd}   &                                          & 1A. Rozplanowanie architektury           \\
-                                       & Architekurę aplikacji                    & 1B. Implementacja architektury aplikacji \\
-                                       &                                          & 1C. Implementacja filtrów konwolucyjnych \\ \hline
-        \multirow{2}{*}{Daniel Jambor} & UI/UX                                    & 2A. Projektowanie UI/UX                  \\
-                                       &                                          & 2B. Wdrożenie założeń UI/UX              \\ \hline
-        Bartek Meller                  & Walidacja danych i dodatkowe elementy UI & 3A. Walidacja danych na textBoxach       \\ \hline
+        Imię Nazwisko                   & Odpowiedzialny za                        & Zrealizował zadania                      \\ \hline
+        \multirow{3}{*}{Paweł Chłąd}    &                                          & 1A. Rozplanowanie architektury           \\
+                                        & Architekurę aplikacji                    & 1B. Implementacja architektury aplikacji \\
+                                        &                                          & 1C. Implementacja filtrów konwolucyjnych \\ \hline
+        \multirow{2}{*}{Daniel Jambor}  & UI/UX                                    & 2A. Projektowanie UI/UX                  \\
+                                        &                                          & 2B. Wdrożenie założeń UI/UX              \\ \hline
+        Bartek Meller                   & Walidacja danych i dodatkowe elementy UI & 3A. Walidacja wprowadzanych danych      \\ 
+                                        &                                          & 3B. Dodatkowe kontrolki użytkownika    \\ \hline
     \end{tabular}
 \end{center}
 
@@ -109,6 +110,50 @@ piksele które wychodzą poza obszar obrazu.
 
 \section{Instrukcja użytkownika}
 %Opis działania stworzonej aplikacji ze zrzutami ekranów ilustrujące sposób działania aplikacji.
+
+Ta sekcja dostarcza informacji na temat użycia programu \textbf{\textit{FilterStudio}}
+\subsection{Overview}
+
+\bigskip
+\includegraphics[width=0.9\textwidth]{overview.png}
+
+\begin{itemize}
+    \item \textit{Project View} -- Wyświetla wszystkie aktywne filtry i umożliwia użytkownikowi wybór filtra do edycji
+    \item \textit{Content Control} -- Umożliwia edycję filtrów, zobacz sekcje "Gaussian Filter" oraz "Basic Matrix Filters"
+    \item \textit{Input Image} -- Wyświetla miniaturę załadowanego obrazu
+    \item \textit{Output Image} -- Wyświetla miniaturę przetworzonego obrazu
+    \item \textit{Options} -- Ta sekcja zawiera przycisk umożliwiający renderowanie oraz wskaźnik postępu
+\end{itemize}
+
+\newpage
+\subsection{Gausian Filter}
+Aby dodać Filtr Gaussa wybierz \textbf{Project $\rightarrow$ Add New Filter $\rightarrow$ Gaussian Filter},
+
+\bigskip
+\includegraphics[width=0.9\textwidth]{gauss.png}
+\bigskip
+
+i wpisz parametry w pola tekstowe
+
+\subsection{Basic Matrix Filter}
+Aby dodać !!!Basic Matrix Filter!!! wybierz \textbf{Project $\rightarrow$ Add New Filter $\rightarrow$ Basic Matrix Filter},
+
+\bigskip
+\includegraphics[width=0.9\textwidth]{matrix.png}
+\bigskip
+
+dostosuj wymiary macierzy za pomocą przycisków w dolnej części !!!Content Control!!!\textbf{Content Control} i wpisz wartości w komórki.
+
+\subsection{Greyscale Filter}
+Aby dodać !!!Greyscale Filter!!! wybierz \textbf{Project $\rightarrow$ Add New Filter $\rightarrow$ Greyscale Filter}
+
+\subsection{Wczytywanie, zapisywanie, oraz tworzenie nowych projektów}
+Wszystkie te funkcje dostępne są w menu \textbf{File} i działają w ustandaryzowany sposób.
+
+\subsection{Wczytywanie i zapisywanie obrazów}
+Obie te funkcje dostępne są w menu \textbf{Image} i działają w ustandaryzowany sposób.
+
+
 \section{Podsumowanie i wnioski}
 %W miejscu tym piszemy co zrealizowaliśmy, z czym były problemy. Jakie są dalsze kierunki rozwoju tej aplikacji.  
 Zrealizowaliśmy pełnoprawny projekt w technologii WPF razem z wdrożeniem wielu wzorców projektowych oraz pomyślnie
