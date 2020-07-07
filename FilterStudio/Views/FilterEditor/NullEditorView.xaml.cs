@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,19 +10,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Globalization;
-using System.Threading;
 
-namespace FilterStudio
+namespace FilterStudio.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for NullEditorView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class NullEditorView : UserControl
     {
-        public MainWindow()
+        public NullEditorView()
         {
-            //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl-PL");
             InitializeComponent();
         }
     }

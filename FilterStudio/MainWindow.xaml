@@ -4,9 +4,144 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilterStudio"
+        xmlns:vm="clr-namespace:FilterStudio.VM"
+        xmlns:view="clr-namespace:FilterStudio.Views"
+        xmlns:selectors="clr-namespace:FilterStudio.Views.Selectors"
+        xmlns:converters="clr-namespace:FilterStudio.Views.Converters"
+        xmlns:concrete="clr-namespace:FilterStudio.Concrete"
+        xmlns:resx="clr-namespace:FilterStudio.Properties"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Filter Studio" Height="500" Width="900" Background="#FFEAEAEA">
 
+    <Window.DataContext>
+        <vm:MainVM/>
+    </Window.DataContext>
+
+
+    <Window.Resources>
+        <converters:BitmapToBitmapSourceConverter x:Key="ToBitmapSourceConverter"></converters:BitmapToBitmapSourceConverter>
+
+        <DataTemplate x:Key="BasicMatrixFilterTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
+            <view:MatrixEditorControl></view:MatrixEditorControl>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GaussianMatrixFilterTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
+            <view:GaussianFilterEditor></view:GaussianFilterEditor>
+        </DataTemplate>
+
+        <!--This template will be used if DataProvider of selected VM is null-->
+        <DataTemplate x:Key="NullTemplate" DataType="{x:Type concrete:BasicMatrixFilter}">
+            <view:NullEditorView></view:NullEditorView>
+        </DataTemplate>
+
+
+        <selectors:FilterDesignerTemplateSelector x:Key="DesignerTemplateSelector"></selectors:FilterDesignerTemplateSelector>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+
+        <Grid.RowDefinitions>
+            <!--Row 0 is reserved for upper menu bar-->
+            <RowDefinition Height="25" MaxHeight="25"/>
+            <!--Row 1 is for content-->
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+
+        <!--Upper menu bar-->
+        <Menu Grid.ColumnSpan="999">
+            <MenuItem Header="{Binding Source={x:Static resx:Resources.fileLabel}}">
+                <MenuItem Header="{Binding Source={x:Static resx:Resources.createNewProjectLabel}}" Command="{Binding CreateNewProjectCommand}"/>
+                <MenuItem Header="{Binding Source={x:Static resx:Resources.openProjectLabel}}" Command="{Binding LoadProjectCommand}"/>
+                <MenuItem Header="{Binding Source={x:Static resx:Resources.saveProjectLabel}}" Command="{Binding SaveProjectCommand}"/>
+            </MenuItem>
+            <MenuItem Header="{Binding Source={x:Static resx:Resources.projectLabel}}">
+                <MenuItem Header="{Binding Source={x:Static resx:Resources.addNewFilterLabel}}">
+                    <MenuItem Header="{Binding Source={x:Static resx:Resources.basicMatrixFilterLabel}}" Command="{Binding AddFilterCommand}" 
+                              CommandParameter="BasicFilter"/>
+                    <MenuItem Header="{Binding Source={x:Static resx:Resources.gaussianFilterLabel}}" Command="{Binding AddFilterCommand}" 
+                              CommandParameter="GaussianFilter"/>
+                    <MenuItem Header="{Binding Source={x:Static resx:Resources.grayscaleFilterLabel}}" Command="{Binding AddFilterCommand}" 
+                              CommandParameter="GrayscaleFilter"/>
+                </MenuItem>
+                <MenuItem Header="{Binding Source={x:Static resx:Resources.removeSelectedFilterLabel}}" Command="{Binding RemoveFilterCommand}"/>
+            </MenuItem>
+            <MenuItem Header="{Binding Source={x:Static resx:Resources.imageLabel}}">
+                <MenuItem Header="{Binding Source={x:Static resx:Resources.loadImageLabel}}" Command="{Binding ExecutionEngineVM.LoadImageCommand}"/>
+                <MenuItem Header="{Binding Source={x:Static resx:Resources.saveImageLabel}}" Command="{Binding ExecutionEngineVM.SaveImageCommand}"/>
+            </MenuItem>
+        </Menu>
+
+
+        <!--Project view-->
+        <GroupBox Grid.Row="1" Header="{Binding Source={x:Static resx:Resources.projectViewLabel}}" Margin="10" Background="White">
+            <ListView ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter}" Grid.Row="1" Grid.Column="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <view:FilterListElement DataContext="{Binding}"></view:FilterListElement>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </GroupBox>
+
+
+        <!--Content control for Filter Designer view note: we could change it with custom user control if you want-->
+        <GroupBox Header="{Binding Source={x:Static resx:Resources.contentControlLabel}}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="10" Background="White">
+            <ContentControl Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Content="{Binding SelectedFilter.DataVM}" 
+                            ContentTemplateSelector="{StaticResource DesignerTemplateSelector}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </GroupBox>
+
+        <!--Image view-->
+        <Grid Grid.Row="1" Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <!--Input image-->
+            <GroupBox Header="{Binding Source={x:Static resx:Resources.inputImageLabel}}" Margin="10" Background="White">
+                <Image Source="{Binding SelectedFilter.LastInput, Converter={StaticResource ToBitmapSourceConverter}}"/>
+            </GroupBox>
+
+            <!--Output image-->
+            <GroupBox Header="{Binding Source={x:Static resx:Resources.outputImageLabel}}" Grid.Row="1" Margin="10" Background="White">
+                <Image Source="{Binding SelectedFilter.LastOutput, Converter={StaticResource ToBitmapSourceConverter}}" Grid.Row="1"/>
+            </GroupBox>
+
+            <!-- Options view-->
+            <GroupBox Header="{Binding Source={x:Static resx:Resources.optionsLabel}}" Grid.Row="2" Margin="10" Background="White">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition MaxHeight="25"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Command="{Binding ExecutionEngineVM.ExecuteTreeCommand}" Content="{Binding Source={x:Static resx:Resources.executeButton}}"/>
+                    <Grid Grid.Row="2">
+                        <ProgressBar  Maximum="{Binding Filters.Count}" Value="{Binding ExecutionEngineVM.TreeExecutionProgressValue, Mode=OneWay}" x:Name="pbStatus"></ProgressBar>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{} {0} {1} {2} {3}">
+                                    <Binding Source="{x:Static resx:Resources.statusBar1Label}"/>
+                                    <Binding ElementName="pbStatus" Path="Value"/>
+                                    <Binding Source="{x:Static resx:Resources.statusBar2Label}"/>
+                                    <Binding ElementName="pbStatus" Path="Maximum"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Grid>
+
+                </Grid>
+            </GroupBox>
+
+        </Grid>
     </Grid>
 </Window>
